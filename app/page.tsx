@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { ArrowRight, ChefHat, Play, Settings, Users } from "lucide-react";
+import {
+  ArrowRight,
+  ChefHat,
+  Download,
+  Play,
+  Settings,
+  Users,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -49,6 +56,21 @@ export default function Home() {
             <Link href="/live-cooking">
               <Button size="lg" variant="outline" className="w-full sm:w-auto">
                 View Demo
+              </Button>
+            </Link>
+          </div>
+          <div className="pt-4">
+            <p className="text-sm text-muted-foreground mb-3">
+              Have a MacBook? Try our companion app
+            </p>
+            <Link href="/download">
+              <Button
+                size="lg"
+                variant="secondary"
+                className="bg-gradient-to-r from-secondary via-secondary/90 to-secondary/80 hover:from-primary/20 hover:via-secondary hover:to-primary/20 transition-all duration-500 hover:scale-105"
+              >
+                <Download className="mr-2 h-5 w-5" />
+                Download App
               </Button>
             </Link>
           </div>
