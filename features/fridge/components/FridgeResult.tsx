@@ -234,8 +234,10 @@ const LoadingState: React.FC = () => {
 
       setTimeout(() => {
         const activeStep = stepElementRefs.current[currentIndex];
-        activeStep?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }, 100);
+        if (activeStep) {
+          activeStep.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      }, 50);
 
       if (currentIndex < steps.length - 1) {
         currentIndex++;
@@ -270,11 +272,14 @@ const LoadingState: React.FC = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6 pt-4">
-        <div className="space-y-2">
-          {steps.map((step) => (
+        <div ref={stepsContainerRef} className="space-y-2 pb-4">
+          {steps.map((step, index) => (
             <div
               key={step.type}
-              className={`flex items-center gap-3 rounded-xl border p-3 transition-all ${
+              ref={(el) => {
+                stepElementRefs.current[index] = el;
+              }}
+              className={`flex items-center gap-3 rounded-xl border p-3 transition-all -scroll-mt-50 ${
                 step.status === "complete"
                   ? "border-green-200 bg-green-50/50"
                   : step.status === "active"
@@ -513,6 +518,19 @@ export const FridgeResult: React.FC<FridgeResultProps> = ({
   error,
   onRetry,
 }) => {
+  const resultsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (result && result.items.length > 0) {
+      setTimeout(() => {
+        resultsRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
+    }
+  }, [result]);
+
   if (isLoading) {
     return <LoadingState />;
   }
@@ -563,7 +581,7 @@ export const FridgeResult: React.FC<FridgeResultProps> = ({
   });
 
   return (
-    <div className="space-y-6">
+    <div ref={resultsRef} className="space-y-6">
       <Card className="border-green-500/20 bg-gradient-to-br from-green-50/30 to-green-50/10 dark:from-green-950/20 dark:to-green-950/10">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-3">
