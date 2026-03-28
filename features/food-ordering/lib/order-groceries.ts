@@ -293,24 +293,25 @@ Strona Wolt jest już otwarta, adres dostawy ustawiony. Zrób screenshot żeby z
 FAZA 1 – Wejdź w Auchan:
 1. W polu wyszukiwania w headerze (lupa na górze) wpisz "Auchan"
 2. Poczekaj na wyniki – pojawią się kafelki sklepów Auchan
-3. Kliknij PIERWSZY Auchan z listy (np. "Auchan Mołdawska")
+3. Kliknij "Auchan Pokorna" z listy wyników
 4. Poczekaj aż załaduje się strona sklepu Auchan
 
 FAZA 2 – Dodaj produkty do koszyka:
 Na stronie Auchana jest pole wyszukiwania "Szukaj w Auchan..." – używaj go do szukania produktów.
 Dla KAŻDEGO produktu z listy:
   a) Kliknij w pole wyszukiwania "Szukaj w Auchan..." i wpisz nazwę produktu
-  b) Poczekaj na wyniki
-  c) Użyj narzędzia addToCart – ono samo znajdzie i kliknie przycisk "+" na pierwszym produkcie
+  b) Poczekaj na wyniki i zrób screenshot
+  c) Od razu użyj narzędzia addToCart – ono kliknie przycisk "+" na PIERWSZYM produkcie w wynikach. NIE scrolluj, NIE oceniaj czy produkt pasuje – wyszukiwarka Wolta zwraca najlepsze dopasowanie jako pierwszy wynik.
   d) Zrób screenshot żeby potwierdzić dodanie
-  g) Przed szukaniem następnego produktu wyczyść pole wyszukiwania
+  e) Przed szukaniem następnego produktu wyczyść pole wyszukiwania
 
 Lista produktów do dodania:
 ${items.map((item, i) => `${i + 1}. ${item}`).join("\n")}
 
 FAZA 3 – Zakończ:
-5. Zrób finalny screenshot
-6. Wywołaj done z podsumowaniem – wymień które produkty udało się dodać a które nie
+5. Kliknij przycisk "Zobacz zamówienie" (div z tekstem "Zobacz zamówienie") – użyj click z method='text' i selector='Zobacz zamówienie'
+6. Zrób finalny screenshot
+7. Wywołaj done z podsumowaniem – wymień które produkty udało się dodać a które nie
 
 WAŻNE: Po każdej akcji rób screenshot żeby zobaczyć efekt. NIE używaj wait – zamiast tego od razu rób screenshot, strona sama się załaduje.`;
 }
