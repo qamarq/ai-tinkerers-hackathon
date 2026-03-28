@@ -2,13 +2,11 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 export default function RegisterPage() {
   const router = useRouter();
 
   useEffect(() => {
-    toast.success("Welcome to Gotownik!");
     router.push("/fridge");
   }, [router]);
 
