@@ -2,14 +2,16 @@
 
 import React, { useCallback, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { CookingPot } from "@phosphor-icons/react";
 import {
+  ArrowLeft,
   ArrowRight,
   Camera,
   CheckCircle,
-  CookingPot,
   Sparkle,
-} from "@phosphor-icons/react";
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -82,7 +84,14 @@ export const FridgePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto space-y-6">
-        <div className="text-center space-y-2">
+        <div className="space-y-2">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Gotownik.love
+          </Link>
           <div className="inline-flex items-center justify-center gap-2 bg-primary/10 rounded-full px-4 py-1.5">
             <CookingPot className="h-5 w-5 text-primary" weight="fill" />
             <span className="text-sm font-medium text-primary">

@@ -1,10 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import {
   CheckCircle2,
   ChefHat,
   Clock,
   Flame,
+  Home,
   Pause,
   Play,
   SkipForward,
@@ -61,9 +63,18 @@ export function CookingDashboard({
 
   return (
     <div className="container mx-auto py-8 space-y-8">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Live Cooking</h1>
-        <p className="text-muted-foreground">Automate your cooking process</p>
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Home className="h-4 w-4" />
+            Gotownik.love
+          </Link>
+          <h1 className="text-3xl font-bold tracking-tight">Live Cooking</h1>
+          <p className="text-muted-foreground">Automate your cooking process</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

@@ -14,16 +14,31 @@ export default function Home() {
     <div className="min-h-screen bg-linear-to-b from-primary/5 to-background">
       <header className="border-b">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-2">
+          <Link
+            href="/"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
             <ChefHat className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">Live Cooking</span>
-          </div>
-          <nav className="flex items-center gap-4">
+            <span className="text-xl font-bold">Gotownik.love</span>
+          </Link>
+          <nav className="flex items-center gap-2">
+            <Link href="/fridge">
+              <Button variant="ghost" size="sm">
+                Fridge
+              </Button>
+            </Link>
+            <Link href="/recipe-research">
+              <Button variant="ghost" size="sm">
+                Recipes
+              </Button>
+            </Link>
             <Link href="/live-cooking">
-              <Button variant="ghost">Sign In</Button>
+              <Button variant="ghost" size="sm">
+                Live Cooking
+              </Button>
             </Link>
             <Link href="/register">
-              <Button>Get Started</Button>
+              <Button size="sm">Get Started</Button>
             </Link>
           </nav>
         </div>
@@ -99,10 +114,13 @@ export default function Home() {
       <footer className="border-t mt-24">
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            >
               <ChefHat className="h-5 w-5 text-primary" />
-              <span className="font-semibold">Live Cooking</span>
-            </div>
+              <span className="font-semibold">Gotownik.love</span>
+            </Link>
             <p className="text-sm text-muted-foreground">
               Built for the AI Tinkerers Hackathon
             </p>
