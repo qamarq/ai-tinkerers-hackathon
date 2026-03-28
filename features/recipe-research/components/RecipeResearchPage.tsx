@@ -525,7 +525,7 @@ export function RecipeResearchPage() {
               <div className="space-y-3">
                 {liveActivity.map((item, index) => (
                   <div
-                    key={`${item.message}-${index}`}
+                    key={index}
                     className={`flex items-start gap-3 rounded-xl border p-4 transition-all ${
                       item.status === "complete"
                         ? "border-green-200 bg-green-50/50"
