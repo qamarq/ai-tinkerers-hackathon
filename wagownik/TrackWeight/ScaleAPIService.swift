@@ -24,7 +24,7 @@ struct WeightResponse: Codable {
 final class ScaleAPIService: Sendable {
     static let  shared = ScaleAPIService()
 
-    private let baseURL = "http://localhost:3000/api/scale"
+    private let baseURL = "https://gotownik.love/api/scale"
 
     func checkShouldWeigh() async throws -> ShouldWeighResponse {
         let url = URL(string: "\(baseURL)/should-weigh")!
