@@ -48,15 +48,12 @@ export function MinutnikApp() {
 
   // Tick interval for countdown
   useEffect(() => {
-    const hasRunning = timers.some((t) => t.isRunning && t.remaining > 0);
-    if (!hasRunning) return;
-
     const interval = setInterval(() => {
       dispatch({ type: "TICK" });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timers, dispatch]);
+  }, [dispatch]);
 
   // Beep when a timer expires
   useEffect(() => {
@@ -149,6 +146,12 @@ export function MinutnikApp() {
           } else {
             dispatch(action);
           }
+        }}
+        onPositionChange={(id, x, y) => {
+          dispatch({
+            type: "UPDATE_POSITION",
+            payload: { id, x, y, isLost: false },
+          });
         }}
       />
 
