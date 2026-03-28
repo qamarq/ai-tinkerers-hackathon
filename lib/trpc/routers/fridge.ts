@@ -1,8 +1,9 @@
-import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { createTRPCRouter, publicProcedure } from "../server";
+import { z } from "zod";
 
 import { runFridgeVisionAgent } from "@/features/fridge/server/fridgeVisionAgent";
+
+import { createTRPCRouter, publicProcedure } from "../server";
 
 const maxImageDataUrlLength = 2_500_000;
 

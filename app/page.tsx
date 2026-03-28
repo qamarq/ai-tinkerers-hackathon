@@ -1,4 +1,5 @@
 import Image from "next/image";
+
 import { VapiExample } from "../components/vapi/VapiExample";
 
 export default function Home() {

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useCallback, useEffect } from 'react';
-import Vapi from '@vapi-ai/web';
+import { useCallback, useEffect, useState } from "react";
+import Vapi from "@vapi-ai/web";
 
 interface VapiConfig {
   publicKey: string;
@@ -47,14 +47,14 @@ export const useVapi = (config: VapiConfig) => {
       setState((prev) => ({ ...prev, error: error.message, isLoading: false }));
     };
 
-    vapiInstance.on('call-start', handleCallStart);
-    vapiInstance.on('call-end', handleCallEnd);
-    vapiInstance.on('error', handleError);
+    vapiInstance.on("call-start", handleCallStart);
+    vapiInstance.on("call-end", handleCallEnd);
+    vapiInstance.on("error", handleError);
 
     return () => {
-      vapiInstance.off('call-start', handleCallStart);
-      vapiInstance.off('call-end', handleCallEnd);
-      vapiInstance.off('error', handleError);
+      vapiInstance.off("call-start", handleCallStart);
+      vapiInstance.off("call-end", handleCallEnd);
+      vapiInstance.off("error", handleError);
     };
   }, [config.publicKey, config.baseUrl]);
 

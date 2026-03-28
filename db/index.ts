@@ -1,6 +1,7 @@
-import { drizzle, type PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import * as schema from './schema/index';
+import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+
+import * as schema from "./schema/index";
 
 let _db: PostgresJsDatabase<typeof schema> | undefined;
 
@@ -9,7 +10,7 @@ export function getDb(): PostgresJsDatabase<typeof schema> {
     const connectionString = process.env.DATABASE_URL;
 
     if (!connectionString) {
-      throw new Error('DATABASE_URL environment variable is not set');
+      throw new Error("DATABASE_URL environment variable is not set");
     }
 
     const queryClient = postgres(connectionString);
@@ -43,6 +44,6 @@ export {
   notInArray,
   or,
   sql,
-} from 'drizzle-orm';
-export * from './schema/index';
+} from "drizzle-orm";
+export * from "./schema/index";
 export type Database = PostgresJsDatabase<typeof schema>;

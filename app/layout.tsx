@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Source_Sans_3 } from "next/font/google";
+
 import { TrpcProvider } from "@/components/providers/trpc-provider";
-import "./globals.css";
 import { cn } from "@/lib/utils";
+
+import "./globals.css";
 
 const sourceSans3 = Source_Sans_3({
   subsets: ["latin"],
@@ -32,7 +34,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", sourceSans3.variable)}
+      className={cn(
+        "h-full",
+        "antialiased",
+        geistSans.variable,
+        geistMono.variable,
+        "font-sans",
+        sourceSans3.variable,
+      )}
     >
       <body className="min-h-full flex flex-col">
         <TrpcProvider>{children}</TrpcProvider>
