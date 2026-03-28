@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
 import { Button } from "@/components/ui/button";
 
 interface TimerSetupPopoverProps {
@@ -18,7 +19,11 @@ const PRESETS = [
   { label: "30m", seconds: 1800 },
 ];
 
-export function TimerSetupPopover({ position, onConfirm, onCancel }: TimerSetupPopoverProps) {
+export function TimerSetupPopover({
+  position,
+  onConfirm,
+  onCancel,
+}: TimerSetupPopoverProps) {
   const [label, setLabel] = useState("");
   const ref = useRef<HTMLDivElement>(null);
 

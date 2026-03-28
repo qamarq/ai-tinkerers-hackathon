@@ -1,8 +1,10 @@
 "use client";
 
-import type { Timer } from "./types";
-import { Play, Pause, ArrowCounterClockwise, X } from "@phosphor-icons/react";
+import { ArrowCounterClockwise, Pause, Play, X } from "@phosphor-icons/react";
+
 import { cn } from "@/lib/utils";
+
+import type { Timer } from "./types";
 
 interface TimerMarkerProps {
   timer: Timer;
@@ -17,7 +19,12 @@ function formatTime(seconds: number): string {
   return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
 }
 
-export function TimerMarker({ timer, onToggle, onReset, onRemove }: TimerMarkerProps) {
+export function TimerMarker({
+  timer,
+  onToggle,
+  onReset,
+  onRemove,
+}: TimerMarkerProps) {
   const isExpired = timer.remaining === 0 && timer.duration > 0;
 
   return (
@@ -36,8 +43,8 @@ export function TimerMarker({ timer, onToggle, onReset, onRemove }: TimerMarkerP
           isExpired
             ? "animate-pulse border-red-400 bg-red-900/80 text-red-100"
             : timer.isLost
-            ? "border-dashed border-yellow-400/60 bg-black/40 text-yellow-200/60"
-            : "border-white/20 bg-black/70 text-white"
+              ? "border-dashed border-yellow-400/60 bg-black/40 text-yellow-200/60"
+              : "border-white/20 bg-black/70 text-white",
         )}
       >
         {timer.label && (
@@ -47,7 +54,7 @@ export function TimerMarker({ timer, onToggle, onReset, onRemove }: TimerMarkerP
         <span
           className={cn(
             "font-mono text-2xl font-bold tabular-nums",
-            isExpired && "text-red-200"
+            isExpired && "text-red-200",
           )}
         >
           {formatTime(timer.remaining)}
@@ -62,7 +69,11 @@ export function TimerMarker({ timer, onToggle, onReset, onRemove }: TimerMarkerP
             className="rounded-full p-1.5 transition-colors hover:bg-white/20"
             title={timer.isRunning ? "Pause" : "Start"}
           >
-            {timer.isRunning ? <Pause size={16} weight="fill" /> : <Play size={16} weight="fill" />}
+            {timer.isRunning ? (
+              <Pause size={16} weight="fill" />
+            ) : (
+              <Play size={16} weight="fill" />
+            )}
           </button>
           <button
             onClick={(e) => {
@@ -95,7 +106,11 @@ export function TimerMarker({ timer, onToggle, onReset, onRemove }: TimerMarkerP
       <div
         className={cn(
           "mx-auto h-0 w-0 border-x-[6px] border-t-[8px] border-x-transparent",
-          isExpired ? "border-t-red-900/80" : timer.isLost ? "border-t-black/40" : "border-t-black/70"
+          isExpired
+            ? "border-t-red-900/80"
+            : timer.isLost
+              ? "border-t-black/40"
+              : "border-t-black/70",
         )}
       />
     </div>
