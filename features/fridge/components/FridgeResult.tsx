@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { FileCode, Spinner } from '@phosphor-icons/react';
-import React from 'react';
+import React from "react";
+import { FileCode, Spinner } from "@phosphor-icons/react";
 
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -13,8 +13,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import type { FridgeInventory } from '@/lib/trpc/routers/fridge';
+} from "@/components/ui/table";
+import type { FridgeInventory } from "@/lib/trpc/routers/fridge";
 
 interface FridgeResultProps {
   result: FridgeInventory | null;
@@ -52,9 +52,7 @@ export const FridgeResult: React.FC<FridgeResultProps> = ({
           <CardTitle className="text-destructive">Analysis failed</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-destructive">
-            {error}
-          </p>
+          <p className="text-sm text-destructive">{error}</p>
         </CardContent>
       </Card>
     );
@@ -72,7 +70,8 @@ export const FridgeResult: React.FC<FridgeResultProps> = ({
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Try another angle, open the fridge wider, or improve lighting and scan again.
+            Try another angle, open the fridge wider, or improve lighting and
+            scan again.
           </p>
         </CardContent>
       </Card>
@@ -101,7 +100,9 @@ export const FridgeResult: React.FC<FridgeResultProps> = ({
                   <TableCell>
                     <div className="font-medium">{item.name}</div>
                     {item.category && (
-                      <div className="text-xs text-muted-foreground">{item.category}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {item.category}
+                      </div>
                     )}
                   </TableCell>
                   <TableCell>
@@ -134,7 +135,9 @@ export const FridgeResult: React.FC<FridgeResultProps> = ({
 
       <div className="text-xs text-muted-foreground border-t pt-4">
         <p>Analyzed at: {new Date(result.meta.analyzedAt).toLocaleString()}</p>
-        {result.meta.notes && <p className="mt-1 italic">{result.meta.notes}</p>}
+        {result.meta.notes && (
+          <p className="mt-1 italic">{result.meta.notes}</p>
+        )}
       </div>
     </div>
   );

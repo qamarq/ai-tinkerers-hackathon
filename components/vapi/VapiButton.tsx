@@ -1,5 +1,6 @@
 import React from "react";
-import { useVapi } from "../../hooks/useVapi";
+
+import { useVapi } from "@/hooks/useVapi";
 
 interface VapiButtonProps {
   publicKey?: string;

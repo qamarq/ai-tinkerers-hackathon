@@ -1,5 +1,5 @@
 {
-  "name": "ai-thinkerers-app",
+  "name": "gotownik",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,12 +7,17 @@
     "build": "next build",
     "start": "next start",
     "lint:style": "eslint",
+    "lint:style:fix": "eslint",
     "lint:typecheck": "tsc --noEmit",
     "db:studio": "drizzle-kit studio",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:reset": "drizzle-kit reset",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky",
+    "typegen": "next typegen"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.53",
@@ -47,8 +52,14 @@
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
+    "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
+    "husky": "^9.1.7",
+    "prettier": "^3.8.1",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5"
+  },
+  "volta": {
+    "node": "24.14.1"
   }
 }

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { trpc } from '@/lib/trpc/client';
-import type { FridgeInventory } from '@/lib/trpc/routers/fridge';
+import { trpc } from "@/lib/trpc/client";
+import type { FridgeInventory } from "@/lib/trpc/routers/fridge";
 
 export function useFridgeParser(): {
   parseImage: (imageDataUrl: string) => Promise<FridgeInventory>;

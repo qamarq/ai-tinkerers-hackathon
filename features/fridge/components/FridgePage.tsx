@@ -1,35 +1,46 @@
-'use client';
+"use client";
 
-import { Camera } from '@phosphor-icons/react';
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from "react";
+import { Camera } from "@phosphor-icons/react";
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import type { FridgeInventory } from '@/lib/trpc/routers/fridge';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { FridgeInventory } from "@/lib/trpc/routers/fridge";
 
-import { FridgeCapture } from './FridgeCapture';
-import { FridgeResult } from './FridgeResult';
-import { useFridgeParser } from '../hooks/useFridgeParser';
-import { fileToDataUrl } from '../utils/fileToDataUrl';
+import { useFridgeParser } from "../hooks/useFridgeParser";
+import { fileToDataUrl } from "../utils/fileToDataUrl";
+import { FridgeCapture } from "./FridgeCapture";
+import { FridgeResult } from "./FridgeResult";
 
 export const FridgePage: React.FC = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [parsedResult, setParsedResult] = useState<FridgeInventory | null>(null);
+  const [parsedResult, setParsedResult] = useState<FridgeInventory | null>(
+    null,
+  );
   const { parseImage, isParsing, error, reset } = useFridgeParser();
 
-  const handleImageCapture = useCallback(async (file: File) => {
-    try {
-      const dataUrl = await fileToDataUrl(file);
-      setImagePreview(dataUrl);
-      setParsedResult(null);
+  const handleImageCapture = useCallback(
+    async (file: File) => {
+      try {
+        const dataUrl = await fileToDataUrl(file);
+        setImagePreview(dataUrl);
+        setParsedResult(null);
 
-      reset();
-      const result = await parseImage(dataUrl);
-      setParsedResult(result);
-    } catch (err) {
-      console.error('Failed to process image:', err);
-    }
-  }, [parseImage, reset]);
+        reset();
+        const result = await parseImage(dataUrl);
+        setParsedResult(result);
+      } catch (err) {
+        console.error("Failed to process image:", err);
+      }
+    },
+    [parseImage, reset],
+  );
 
   const handleClearImage = useCallback(() => {
     setImagePreview(null);
@@ -44,7 +55,8 @@ export const FridgePage: React.FC = () => {
           <CardHeader>
             <CardTitle className="text-3xl">Fridge Scanner</CardTitle>
             <CardDescription>
-              Take a photo of your fridge and we&apos;ll send it to an AI vision agent via tRPC.
+              Take a photo of your fridge and we&apos;ll send it to an AI vision
+              agent via tRPC.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-8">
@@ -61,8 +73,8 @@ export const FridgePage: React.FC = () => {
             {imagePreview && (
               <div className="rounded-lg border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
                 {isParsing
-                  ? 'Running fridge analysis...'
-                  : 'Analysis complete. You can retake the photo to scan again.'}
+                  ? "Running fridge analysis..."
+                  : "Analysis complete. You can retake the photo to scan again."}
               </div>
             )}
 
@@ -78,7 +90,11 @@ export const FridgePage: React.FC = () => {
             )}
 
             {imagePreview && !isParsing && (
-              <Button variant="outline" className="w-full" onClick={handleClearImage}>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={handleClearImage}
+              >
                 <Camera className="mr-2 h-4 w-4" />
                 Scan Another Photo
               </Button>
