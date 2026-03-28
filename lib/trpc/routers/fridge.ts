@@ -10,7 +10,10 @@ const fridgeImageInputSchema = z.object({
   imageDataUrl: z
     .string()
     .startsWith("data:image/")
-    .max(maxImageDataUrlLength, "Image payload too large. Please retake with lower resolution."),
+    .max(
+      maxImageDataUrlLength,
+      "Image payload too large. Please retake with lower resolution.",
+    ),
 });
 
 const fridgeItemSchema = z.object({
@@ -46,23 +49,15 @@ export const fridgeRouter = createTRPCRouter({
         });
       }
 
-      try {
-        const agentOutput = await runFridgeVisionAgent(input.imageDataUrl);
+      const agentOutput = await runFridgeVisionAgent(input.imageDataUrl);
 
-        return {
-          items: agentOutput.items,
-          meta: {
-            analyzedAt: new Date().toISOString(),
-            imageSize: input.imageDataUrl.length,
-            notes: agentOutput.notes,
-          },
-        };
-      } catch (error) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Unable to analyze the fridge photo right now.",
-          cause: error,
-        });
-      }
+      return {
+        items: agentOutput.items,
+        meta: {
+          analyzedAt: new Date().toISOString(),
+          imageSize: input.imageDataUrl.length,
+          notes: agentOutput.notes,
+        },
+      };
     }),
 });
