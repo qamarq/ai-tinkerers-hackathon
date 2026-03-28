@@ -18,6 +18,7 @@ import {
   cookingTools,
   generateCookingSystemPrompt,
 } from "../tools/cookingTools";
+import type { CookingStep } from "../types/cooking";
 import { requestWeighing } from "../utils/weighingUtils";
 
 const MODEL = "gemini-3.1-flash-live-preview";
@@ -153,6 +154,31 @@ export function useCookingSession({
               });
             }
           })();
+          break;
+        case "update_steps":
+          try {
+            const newSteps = args.steps as CookingStep[];
+            if (Array.isArray(newSteps)) {
+              setSteps(newSteps);
+              respond({
+                success: true,
+                message: `Steps updated successfully. New step count: ${newSteps.length}`,
+              });
+            } else {
+              respond({
+                success: false,
+                error: "Invalid steps format",
+              });
+            }
+          } catch (error) {
+            respond({
+              success: false,
+              error:
+                error instanceof Error
+                  ? error.message
+                  : "Failed to update steps",
+            });
+          }
           break;
         default:
           respond("unknown tool");

@@ -100,6 +100,35 @@ export const cookingTools: { functionDeclarations: FunctionDeclaration[] } = {
         required: ["ingredient_name", "target_amount"],
       },
     },
+    {
+      name: "update_steps",
+      description:
+        "Updates the cooking steps list. Use this when user wants to modify the recipe flow, add new steps, remove steps, or adjust existing steps based on their needs or situation.",
+      parameters: {
+        type: Type.OBJECT,
+        properties: {
+          steps: {
+            type: Type.ARRAY,
+            description:
+              "New array of cooking steps. Each step should have: id (number), text (string), checked (boolean), and optionally ingredientIds (array of strings)",
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                id: { type: Type.NUMBER },
+                text: { type: Type.STRING },
+                checked: { type: Type.BOOLEAN },
+                ingredientIds: {
+                  type: Type.ARRAY,
+                  items: { type: Type.STRING },
+                },
+              },
+              required: ["id", "text", "checked"],
+            },
+          },
+        },
+        required: ["steps"],
+      },
+    },
   ],
 };
 
@@ -132,19 +161,20 @@ Step 8: Serve immediately in warm plates with extra cheese and pepper [Ingredien
 == YOUR BEHAVIOR ==
 1. Start with a warm, brief greeting - ask if user is ready and has all ingredients
 2. Guide ONE step at a time - don't rush ahead
-3. BE PROACTIVE with tools:
+3. BE FLEXIBLE: If user wants to modify the recipe, skip steps, add steps, or adjust the cooking plan - use update_steps tool to adapt the recipe to their needs
+4. BE PROACTIVE with tools:
    - AUTOMATICALLY use check_ingredient as soon as user confirms they have/used an ingredient (don't wait for explicit permission)
    - AUTOMATICALLY use check_step as soon as you see/confirm a step is completed
    - IMPORTANT: When marking step N as done, ALWAYS mark all previous steps (1 to N-1) as done too if they aren't already - steps must be completed sequentially
    - AUTOMATICALLY use weigh_ingredient when an ingredient amount requires weighing (e.g., "150g bacon", "200g flour") - call it BEFORE user starts using that ingredient
-4. When something needs time (boiling water ~8min, pasta ~8-10min, bacon ~5min) - use start_timer. Use get_timer_status to check what's currently timing and how much time is left.
-5. Give practical tips (e.g., "water should be as salty as the sea")
-6. WARN about critical moments (heat OFF when adding eggs!)
-7. Be enthusiastic, motivating, like a chef-friend
-8. Answer BRIEFLY - this is real-time voice conversation
-9. You can comment on what you see through the camera
-10. At the end, celebrate success and give serving tips!
-11. After all steps are done and user confirms they're finished (ask: "Is there anything else I can help you with?"), call end_session tool to complete the cooking session
+5. When something needs time (boiling water ~8min, pasta ~8-10min, bacon ~5min) - use start_timer. Use get_timer_status to check what's currently timing and how much time is left.
+6. Give practical tips (e.g., "water should be as salty as the sea")
+7. WARN about critical moments (heat OFF when adding eggs!)
+8. Be enthusiastic, motivating, like a chef-friend
+9. Answer BRIEFLY - this is real-time voice conversation
+10. You can comment on what you see through the camera
+11. At the end, celebrate success and give serving tips!
+12. After all steps are done and user confirms they're finished (ask: "Is there anything else I can help you with?"), call end_session tool to complete the cooking session
 
 Timing:
 - Boiling water: ~8-10 minutes = start_timer(540)
@@ -191,19 +221,20 @@ ${stepsList}
 == YOUR BEHAVIOR ==
 1. Start with a warm, brief greeting mentioning the recipe - ask if user is ready and has all ingredients
 2. Guide ONE step at a time - don't rush ahead
-3. BE PROACTIVE with tools:
+3. BE FLEXIBLE: If user wants to modify the recipe, skip steps, add steps, or adjust the cooking plan - use update_steps tool to adapt the recipe to their needs
+4. BE PROACTIVE with tools:
    - AUTOMATICALLY use check_ingredient as soon as user confirms they have/used an ingredient (don't wait for explicit permission)
    - AUTOMATICALLY use check_step as soon as you see/confirm a step is completed
    - IMPORTANT: When marking step N as done, ALWAYS mark all previous steps (1 to N-1) as done too if they aren't already - steps must be completed sequentially
    - AUTOMATICALLY use weigh_ingredient when an ingredient amount requires weighing (e.g., "150g bacon", "200g flour") - call it BEFORE user starts using that ingredient
-4. When something needs time - use start_timer with appropriate duration. Use get_timer_status to check what's currently timing and how much time is left.
-5. Give practical cooking tips
-6. WARN about critical moments (heat control, timing, etc.)
-7. Be enthusiastic, motivating, like a chef-friend
-8. Answer BRIEFLY - this is real-time voice conversation
-9. You can comment on what you see through the camera
-10. At the end, celebrate success and give serving tips!
-11. After all steps are done and user confirms they're finished (ask: "Is there anything else I can help you with?"), call end_session tool to complete the cooking session
+5. When something needs time - use start_timer with appropriate duration. Use get_timer_status to check what's currently timing and how much time is left.
+6. Give practical cooking tips
+7. WARN about critical moments (heat control, timing, etc.)
+8. Be enthusiastic, motivating, like a chef-friend
+9. Answer BRIEFLY - this is real-time voice conversation
+10. You can comment on what you see through the camera
+11. At the end, celebrate success and give serving tips!
+12. After all steps are done and user confirms they're finished (ask: "Is there anything else I can help you with?"), call end_session tool to complete the cooking session
 
 Be flexible with timing estimates based on what you see and what the user tells you.`;
 }
