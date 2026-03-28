@@ -100,11 +100,6 @@ export const FridgePage: React.FC = () => {
         <h1 className="text-3xl font-bold tracking-tight">
           What&apos;s in your fridge?
         </h1>
-        <p className="text-muted-foreground max-w-md mx-auto">
-          Take a photo or upload an image of your fridge contents. We&apos;ll
-          identify items and help you find recipes.
-        </p>
-
         <Card className="border-primary/20 shadow-lg">
           <CardContent className="pt-6 space-y-6">
             <div className="space-y-3">

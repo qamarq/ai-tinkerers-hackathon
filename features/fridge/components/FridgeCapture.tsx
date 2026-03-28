@@ -15,6 +15,13 @@ interface FridgeCaptureProps {
 
 type CameraSourceSelection = `device:${string}`;
 
+const isPermissionDeniedError = (error: unknown): boolean => {
+  return (
+    error instanceof DOMException &&
+    (error.name === "NotAllowedError" || error.name === "SecurityError")
+  );
+};
+
 export const FridgeCapture: React.FC<FridgeCaptureProps> = ({
   onImageCapture,
   imagePreview,
@@ -35,6 +42,7 @@ export const FridgeCapture: React.FC<FridgeCaptureProps> = ({
   const streamRef = useRef<MediaStream | null>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const previousCameraSourceRef = useRef<CameraSourceSelection | "">("");
+  const hasGrantedCameraPermissionRef = useRef(false);
 
   const stopCamera = useCallback(() => {
     streamRef.current?.getTracks().forEach((track) => {
@@ -185,11 +193,6 @@ export const FridgeCapture: React.FC<FridgeCaptureProps> = ({
       return;
     }
 
-    if (!cameraSource) {
-      setCameraError("No camera source detected. Connect a camera and retry.");
-      return;
-    }
-
     if (!navigator.mediaDevices?.getUserMedia) {
       setCameraError("This browser does not support camera capture.");
       return;
@@ -201,22 +204,69 @@ export const FridgeCapture: React.FC<FridgeCaptureProps> = ({
 
       stopCamera();
 
-      const videoConstraint = {
-        deviceId: { exact: cameraSource.replace("device:", "") },
-      };
+      if (!hasGrantedCameraPermissionRef.current) {
+        const permissionProbeStream = await navigator.mediaDevices.getUserMedia(
+          {
+            video: true,
+            audio: false,
+          },
+        );
+        permissionProbeStream.getTracks().forEach((track) => {
+          track.stop();
+        });
+        hasGrantedCameraPermissionRef.current = true;
+        await loadCameraDevices();
+      }
 
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: videoConstraint,
-        audio: false,
-      });
+      let stream: MediaStream;
+
+      if (cameraSource) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              deviceId: { exact: cameraSource.replace("device:", "") },
+            },
+            audio: false,
+          });
+        } catch (error) {
+          if (isPermissionDeniedError(error)) {
+            throw error;
+          }
+
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false,
+          });
+
+          const selectedDeviceId = stream
+            .getVideoTracks()[0]
+            ?.getSettings().deviceId;
+          if (selectedDeviceId) {
+            setCameraSource(
+              `device:${selectedDeviceId}` as CameraSourceSelection,
+            );
+          }
+        }
+      } else {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false,
+        });
+      }
 
       streamRef.current = stream;
       setCameraOpen(true);
       await loadCameraDevices();
-    } catch {
-      setCameraError(
-        "Unable to access selected camera source. Try another source.",
-      );
+    } catch (error) {
+      if (isPermissionDeniedError(error)) {
+        setCameraError(
+          "Camera permission denied. Enable camera access and try again.",
+        );
+      } else {
+        setCameraError(
+          "Unable to access selected camera source. Try another source.",
+        );
+      }
       stopCamera();
     } finally {
       setIsStartingCamera(false);

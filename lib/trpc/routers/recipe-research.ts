@@ -1,7 +1,10 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { runRecipeResearchAgent } from "@/features/recipe-research/server/recipeResearchAgent";
+import {
+  runRecipeQuickSearchAgent,
+  runRecipeResearchAgent,
+} from "@/features/recipe-research/server/recipeResearchAgent";
 
 import { createTRPCRouter, publicProcedure } from "../server";
 
@@ -25,6 +28,10 @@ const recipeResearchInputSchema = z.object({
   servings: z.number().int().min(1).max(16).optional(),
   maxPrepMinutes: z.number().int().min(5).max(300).optional(),
   maxMissingIngredients: z.number().int().min(0).max(20).default(3),
+});
+
+const quickSearchInputSchema = z.object({
+  fridgeIngredients: z.array(z.string().min(1)).min(1).max(50),
 });
 
 const recipeRecommendationSchema = z.object({
@@ -69,9 +76,40 @@ const recipeResearchOutputSchema = z.object({
   }),
 });
 
+const quickSearchOutputSchema = z.object({
+  searches: z
+    .array(
+      z
+        .string()
+        .min(1)
+        .max(60)
+        .refine(
+          (value) => value.trim().split(/\s+/).filter(Boolean).length <= 4,
+          "Search must be at most 4 words",
+        ),
+    )
+    .length(3),
+});
+
 export type RecipeResearchResult = z.infer<typeof recipeResearchOutputSchema>;
+export type RecipeQuickSearchResult = z.infer<typeof quickSearchOutputSchema>;
 
 export const recipeResearchRouter = createTRPCRouter({
+  suggestQuickSearches: publicProcedure
+    .input(quickSearchInputSchema)
+    .output(quickSearchOutputSchema)
+    .mutation(async ({ input }) => {
+      if (!process.env.GEMINI_API_KEY) {
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "GEMINI_API_KEY is missing on the server.",
+        });
+      }
+
+      return runRecipeQuickSearchAgent({
+        fridgeIngredients: input.fridgeIngredients,
+      });
+    }),
   findRecipes: publicProcedure
     .input(recipeResearchInputSchema)
     .output(recipeResearchOutputSchema)

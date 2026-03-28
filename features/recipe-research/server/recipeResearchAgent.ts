@@ -56,6 +56,21 @@ const llmRecipesSchema = z.object({
   recipes: z.array(llmRecipeCandidateSchema).min(3).max(12),
 });
 
+const quickSearchesSchema = z.object({
+  searches: z
+    .array(
+      z
+        .string()
+        .min(1)
+        .max(60)
+        .refine(
+          (value) => value.trim().split(/\s+/).filter(Boolean).length <= 4,
+          "Search must be at most 4 words",
+        ),
+    )
+    .length(3),
+});
+
 export type RecipeResearchOutput = z.infer<typeof recipeResearchOutputSchema>;
 
 export interface RecipeResearchAgentInput {
@@ -67,6 +82,10 @@ export interface RecipeResearchAgentInput {
   servings?: number;
   maxPrepMinutes?: number;
   maxMissingIngredients: number;
+}
+
+export interface RecipeQuickSearchAgentInput {
+  fridgeIngredients: string[];
 }
 
 const firecrawl = new FirecrawlAppV1({
@@ -129,6 +148,43 @@ function uniqueStrings(items: string[]): string[] {
   }
 
   return result;
+}
+
+export async function runRecipeQuickSearchAgent(
+  input: RecipeQuickSearchAgentInput,
+): Promise<{ searches: string[] }> {
+  const cleaned = uniqueStrings(input.fridgeIngredients).slice(0, 10);
+
+  if (cleaned.length === 0) {
+    throw new Error("At least one ingredient is required for suggestions.");
+  }
+
+  try {
+    const { output } = await generateText({
+      model: gemini,
+      output: Output.object({ schema: quickSearchesSchema }),
+      prompt: `You create short recipe search prompts.
+
+Available fridge ingredients:
+${cleaned.join(", ")}
+
+Return exactly 3 user-ready search prompts that maximize ingredient overlap and are practical for home cooking.
+Constraints:
+- Each prompt must be 2-4 words.
+- Mention at least 2 specific ingredients when possible.
+- Prefer low-shopping or no-waste framing.
+- Keep prompts natural and easy to copy into a recipe search.
+- Output only structured data via the schema.`,
+    });
+
+    return {
+      searches: output.searches.map((search) =>
+        search.trim().split(/\s+/).slice(0, 4).join(" "),
+      ),
+    };
+  } catch {
+    throw new Error("Failed to generate quick searches.");
+  }
 }
 
 function buildSearchQuery(input: RecipeResearchAgentInput): string {
