@@ -68,6 +68,31 @@ struct ScaleView: View {
 
                 // Bottom controls
                 VStack(spacing: 12) {
+                    if viewModel.pendingMeasurementId != nil {
+                        if viewModel.submitSuccess {
+                            HStack(spacing: 6) {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundStyle(Color.gotownikPrimary)
+                                Text("Sent!")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(Color.gotownikPrimary)
+                            }
+                            .transition(.opacity.combined(with: .scale(scale: 0.9)))
+                        } else {
+                            Text("Press Enter to submit weight")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(Color.gotownikPrimary)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 6)
+                                .background(
+                                    Capsule()
+                                        .fill(Color.gotownikPrimary.opacity(0.12))
+                                        .overlay(Capsule().stroke(Color.gotownikPrimary.opacity(0.3), lineWidth: 1))
+                                )
+                                .transition(.opacity.combined(with: .scale(scale: 0.9)))
+                        }
+                    }
+
                     if viewModel.hasTouch {
                         Text("Spacebar to zero")
                             .font(.system(size: 12, weight: .medium))
@@ -93,7 +118,7 @@ struct ScaleView: View {
                     .scaleEffect(viewModel.hasTouch ? 1 : 0.9)
                     .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.hasTouch)
                 }
-                .frame(height: 72)
+                .frame(height: 96)
                 .padding(.bottom, 24)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -117,8 +142,14 @@ struct ScaleView: View {
 
     private func setupKeyMonitoring() {
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+            print("[Key] keyCode=\(event.keyCode), pendingId=\(String(describing: viewModel.pendingMeasurementId)), weight=\(viewModel.currentWeight)")
             if event.keyCode == 49 && viewModel.hasTouch {
                 viewModel.zeroScale()
+            }
+            // Enter key (keyCode 36) to submit weight
+            if event.keyCode == 36 && viewModel.pendingMeasurementId != nil {
+                print("[Key] Submitting weight!")
+                viewModel.submitWeight()
             }
             return event
         }
