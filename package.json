@@ -15,6 +15,7 @@
     "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.53",
     "@vapi-ai/server-sdk": "^0.11.0",
     "@vapi-ai/web": "^2.5.2",
     "ai": "^6.0.141",
