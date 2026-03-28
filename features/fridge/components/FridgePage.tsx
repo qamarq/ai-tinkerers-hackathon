@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useState } from "react";
+import Link from "next/link";
 import { Camera } from "@phosphor-icons/react";
 
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,8 @@ import { useFridgeParser } from "../hooks/useFridgeParser";
 import { fileToDataUrl } from "../utils/fileToDataUrl";
 import { FridgeCapture } from "./FridgeCapture";
 import { FridgeResult } from "./FridgeResult";
+
+const FRIDGE_INVENTORY_STORAGE_KEY = "fridge:lastInventory";
 
 export const FridgePage: React.FC = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -45,8 +48,20 @@ export const FridgePage: React.FC = () => {
   const handleClearImage = useCallback(() => {
     setImagePreview(null);
     setParsedResult(null);
+    window.localStorage.removeItem(FRIDGE_INVENTORY_STORAGE_KEY);
     reset();
   }, [reset]);
+
+  React.useEffect(() => {
+    if (!parsedResult) {
+      return;
+    }
+
+    window.localStorage.setItem(
+      FRIDGE_INVENTORY_STORAGE_KEY,
+      JSON.stringify(parsedResult),
+    );
+  }, [parsedResult]);
 
   return (
     <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8">
@@ -87,6 +102,14 @@ export const FridgePage: React.FC = () => {
                   error={error}
                 />
               </div>
+            )}
+
+            {parsedResult && !isParsing && (
+              <Link href="/recipe-research">
+                <Button className="w-full">
+                  Find Best Recipes From My Fridge
+                </Button>
+              </Link>
             )}
 
             {imagePreview && !isParsing && (
