@@ -28,6 +28,7 @@ A helper script to set up code signing certificates for automated DMG builds.
 ### Output
 
 The script will generate the values for these GitHub repository secrets:
+
 - `BUILD_CERTIFICATE_BASE64`: Base64-encoded .p12 certificate
 - `P12_PASSWORD`: Certificate password
 - `BUILD_PROVISION_PROFILE_BASE64`: Base64-encoded provisioning profile (optional)

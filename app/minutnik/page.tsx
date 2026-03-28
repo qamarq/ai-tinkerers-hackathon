@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+
 import { MinutnikApp } from "./_components/MinutnikApp";
 
 export const metadata: Metadata = {

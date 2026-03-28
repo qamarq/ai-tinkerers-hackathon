@@ -5259,7 +5259,10 @@ packages:
     hasBin: true
 
   jsfeat@0.0.8:
-    resolution: {integrity: sha512-wG2Rzv9ywe2KGnX+N8VJtFO0srwyZaRmV8cBjsE52PCNdNJk8nVGtiK9HQ5wZZ5fUxk3wVPqV3zr8KxQjulR3w==}
+    resolution:
+      {
+        integrity: sha512-wG2Rzv9ywe2KGnX+N8VJtFO0srwyZaRmV8cBjsE52PCNdNJk8nVGtiK9HQ5wZZ5fUxk3wVPqV3zr8KxQjulR3w==,
+      }
 
   json-buffer@3.0.1:
     resolution:

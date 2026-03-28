@@ -1,6 +1,7 @@
 "use client";
 
 import { useReducer } from "react";
+
 import type { Timer, TimerAction } from "./types";
 
 function timerReducer(state: Timer[], action: TimerAction): Timer[] {
@@ -25,14 +26,14 @@ function timerReducer(state: Timer[], action: TimerAction): Timer[] {
 
     case "TOGGLE_TIMER":
       return state.map((t) =>
-        t.id === action.payload.id ? { ...t, isRunning: !t.isRunning } : t
+        t.id === action.payload.id ? { ...t, isRunning: !t.isRunning } : t,
       );
 
     case "RESET_TIMER":
       return state.map((t) =>
         t.id === action.payload.id
           ? { ...t, remaining: t.duration, isRunning: false }
-          : t
+          : t,
       );
 
     case "UPDATE_POSITION":
@@ -44,7 +45,7 @@ function timerReducer(state: Timer[], action: TimerAction): Timer[] {
               y: action.payload.y,
               isLost: action.payload.isLost,
             }
-          : t
+          : t,
       );
 
     case "TICK":
