@@ -87,6 +87,7 @@ export interface RecipeResearchAgentInput {
 
 export interface RecipeQuickSearchAgentInput {
   fridgeIngredients: string[];
+  pinYogurtChiaFirstResult?: boolean;
 }
 
 const firecrawl = new FirecrawlAppV1({
@@ -180,7 +181,7 @@ Constraints:
 
     return {
       searches: [
-        "Quick breakfast",
+        input.pinYogurtChiaFirstResult ? "Chia pudding" : "Quick breakfast",
         ...output.searches
           .map((search) => search.trim().split(/\s+/).slice(0, 4).join(" "))
           .filter(Boolean)
@@ -228,10 +229,10 @@ function buildPinnedYogurtChiaRecipe(
   maxMissingIngredients: number,
 ): RecipeResearchOutput["recipes"][number] {
   const ingredients = uniqueStrings([
-    "Plain Greek yogurt",
-    "Unsweetened almond milk",
-    "Chia seeds",
-    "Frozen raspberries",
+    "Greek yogurt (50g)",
+    "Milk (20g)",
+    "Chia seeds (3 spoons)",
+    "Raspberries (3)",
   ]);
 
   const availableIngredients = ingredients.filter((ingredient) =>
