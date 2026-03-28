@@ -58,6 +58,9 @@ importers:
       drizzle-orm:
         specifier: ^0.45.2
         version: 0.45.2(@opentelemetry/api@1.9.0)(postgres@3.4.8)
+      jotai:
+        specifier: ^2.19.0
+        version: 2.19.0(@babel/core@7.29.0)(@babel/template@7.28.6)(@types/react@19.2.14)(react@19.2.4)
       jsfeat:
         specifier: ^0.0.8
         version: 0.0.8
@@ -1352,7 +1355,6 @@ packages:
       }
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   "@img/sharp-libvips-linux-arm@1.2.4":
     resolution:
@@ -1361,7 +1363,6 @@ packages:
       }
     cpu: [arm]
     os: [linux]
-    libc: [glibc]
 
   "@img/sharp-libvips-linux-ppc64@1.2.4":
     resolution:
@@ -1370,7 +1371,6 @@ packages:
       }
     cpu: [ppc64]
     os: [linux]
-    libc: [glibc]
 
   "@img/sharp-libvips-linux-riscv64@1.2.4":
     resolution:
@@ -1379,7 +1379,6 @@ packages:
       }
     cpu: [riscv64]
     os: [linux]
-    libc: [glibc]
 
   "@img/sharp-libvips-linux-s390x@1.2.4":
     resolution:
@@ -1388,7 +1387,6 @@ packages:
       }
     cpu: [s390x]
     os: [linux]
-    libc: [glibc]
 
   "@img/sharp-libvips-linux-x64@1.2.4":
     resolution:
@@ -1397,7 +1395,6 @@ packages:
       }
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   "@img/sharp-libvips-linuxmusl-arm64@1.2.4":
     resolution:
@@ -1406,7 +1403,6 @@ packages:
       }
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   "@img/sharp-libvips-linuxmusl-x64@1.2.4":
     resolution:
@@ -1415,7 +1411,6 @@ packages:
       }
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   "@img/sharp-linux-arm64@0.34.5":
     resolution:
@@ -1425,7 +1420,6 @@ packages:
     engines: { node: ^18.17.0 || ^20.3.0 || >=21.0.0 }
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   "@img/sharp-linux-arm@0.34.5":
     resolution:
@@ -1435,7 +1429,6 @@ packages:
     engines: { node: ^18.17.0 || ^20.3.0 || >=21.0.0 }
     cpu: [arm]
     os: [linux]
-    libc: [glibc]
 
   "@img/sharp-linux-ppc64@0.34.5":
     resolution:
@@ -1445,7 +1438,6 @@ packages:
     engines: { node: ^18.17.0 || ^20.3.0 || >=21.0.0 }
     cpu: [ppc64]
     os: [linux]
-    libc: [glibc]
 
   "@img/sharp-linux-riscv64@0.34.5":
     resolution:
@@ -1455,7 +1447,6 @@ packages:
     engines: { node: ^18.17.0 || ^20.3.0 || >=21.0.0 }
     cpu: [riscv64]
     os: [linux]
-    libc: [glibc]
 
   "@img/sharp-linux-s390x@0.34.5":
     resolution:
@@ -1465,7 +1456,6 @@ packages:
     engines: { node: ^18.17.0 || ^20.3.0 || >=21.0.0 }
     cpu: [s390x]
     os: [linux]
-    libc: [glibc]
 
   "@img/sharp-linux-x64@0.34.5":
     resolution:
@@ -1475,7 +1465,6 @@ packages:
     engines: { node: ^18.17.0 || ^20.3.0 || >=21.0.0 }
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   "@img/sharp-linuxmusl-arm64@0.34.5":
     resolution:
@@ -1485,7 +1474,6 @@ packages:
     engines: { node: ^18.17.0 || ^20.3.0 || >=21.0.0 }
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   "@img/sharp-linuxmusl-x64@0.34.5":
     resolution:
@@ -1495,7 +1483,6 @@ packages:
     engines: { node: ^18.17.0 || ^20.3.0 || >=21.0.0 }
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   "@img/sharp-wasm32@0.34.5":
     resolution:
@@ -1704,7 +1691,6 @@ packages:
     engines: { node: ">= 10" }
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   "@next/swc-linux-arm64-musl@16.2.1":
     resolution:
@@ -1714,7 +1700,6 @@ packages:
     engines: { node: ">= 10" }
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   "@next/swc-linux-x64-gnu@16.2.1":
     resolution:
@@ -1724,7 +1709,6 @@ packages:
     engines: { node: ">= 10" }
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   "@next/swc-linux-x64-musl@16.2.1":
     resolution:
@@ -1734,7 +1718,6 @@ packages:
     engines: { node: ">= 10" }
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   "@next/swc-win32-arm64-msvc@16.2.1":
     resolution:
@@ -2900,7 +2883,6 @@ packages:
     engines: { node: ">= 20" }
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   "@tailwindcss/oxide-linux-arm64-musl@4.2.2":
     resolution:
@@ -2910,7 +2892,6 @@ packages:
     engines: { node: ">= 20" }
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   "@tailwindcss/oxide-linux-x64-gnu@4.2.2":
     resolution:
@@ -2920,7 +2901,6 @@ packages:
     engines: { node: ">= 20" }
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   "@tailwindcss/oxide-linux-x64-musl@4.2.2":
     resolution:
@@ -2930,7 +2910,6 @@ packages:
     engines: { node: ">= 20" }
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   "@tailwindcss/oxide-wasm32-wasi@4.2.2":
     resolution:
@@ -3270,7 +3249,6 @@ packages:
       }
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   "@unrs/resolver-binding-linux-arm64-musl@1.11.1":
     resolution:
@@ -3279,7 +3257,6 @@ packages:
       }
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   "@unrs/resolver-binding-linux-ppc64-gnu@1.11.1":
     resolution:
@@ -3288,7 +3265,6 @@ packages:
       }
     cpu: [ppc64]
     os: [linux]
-    libc: [glibc]
 
   "@unrs/resolver-binding-linux-riscv64-gnu@1.11.1":
     resolution:
@@ -3297,7 +3273,6 @@ packages:
       }
     cpu: [riscv64]
     os: [linux]
-    libc: [glibc]
 
   "@unrs/resolver-binding-linux-riscv64-musl@1.11.1":
     resolution:
@@ -3306,7 +3281,6 @@ packages:
       }
     cpu: [riscv64]
     os: [linux]
-    libc: [musl]
 
   "@unrs/resolver-binding-linux-s390x-gnu@1.11.1":
     resolution:
@@ -3315,7 +3289,6 @@ packages:
       }
     cpu: [s390x]
     os: [linux]
-    libc: [glibc]
 
   "@unrs/resolver-binding-linux-x64-gnu@1.11.1":
     resolution:
@@ -3324,7 +3297,6 @@ packages:
       }
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   "@unrs/resolver-binding-linux-x64-musl@1.11.1":
     resolution:
@@ -3333,7 +3305,6 @@ packages:
       }
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   "@unrs/resolver-binding-wasm32-wasi@1.11.1":
     resolution:
@@ -5558,6 +5529,27 @@ packages:
         integrity: sha512-d7kPDd34KO/YnzaDOlikGpOurfF0ByC2sEV4cANCtdqLlTfBlw2p14O/5d/zv40gJPbIQxfES3nSx1/oYNyuZQ==,
       }
 
+  jotai@2.19.0:
+    resolution:
+      {
+        integrity: sha512-r2wwxEXP1F2JteDLZEOPoIpAHhV89paKsN5GWVYndPNMMP/uVZDcC+fNj0A8NjKgaPWzdyO8Vp8YcYKe0uCEqQ==,
+      }
+    engines: { node: ">=12.20.0" }
+    peerDependencies:
+      "@babel/core": ">=7.0.0"
+      "@babel/template": ">=7.0.0"
+      "@types/react": ">=17.0.0"
+      react: ">=17.0.0"
+    peerDependenciesMeta:
+      "@babel/core":
+        optional: true
+      "@babel/template":
+        optional: true
+      "@types/react":
+        optional: true
+      react:
+        optional: true
+
   js-tokens@4.0.0:
     resolution:
       {
@@ -5772,7 +5764,6 @@ packages:
     engines: { node: ">= 12.0.0" }
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   lightningcss-linux-arm64-musl@1.32.0:
     resolution:
@@ -5782,7 +5773,6 @@ packages:
     engines: { node: ">= 12.0.0" }
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   lightningcss-linux-x64-gnu@1.32.0:
     resolution:
@@ -5792,7 +5782,6 @@ packages:
     engines: { node: ">= 12.0.0" }
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   lightningcss-linux-x64-musl@1.32.0:
     resolution:
@@ -5802,7 +5791,6 @@ packages:
     engines: { node: ">= 12.0.0" }
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   lightningcss-win32-arm64-msvc@1.32.0:
     resolution:
@@ -11073,6 +11061,13 @@ snapshots:
   jiti@2.6.1: {}
 
   jose@6.2.2: {}
+
+  jotai@2.19.0(@babel/core@7.29.0)(@babel/template@7.28.6)(@types/react@19.2.14)(react@19.2.4):
+    optionalDependencies:
+      "@babel/core": 7.29.0
+      "@babel/template": 7.28.6
+      "@types/react": 19.2.14
+      react: 19.2.4
 
   js-tokens@4.0.0: {}
 
