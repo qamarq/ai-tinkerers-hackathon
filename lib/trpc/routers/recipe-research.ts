@@ -265,26 +265,30 @@ export const recipeResearchRouter = createTRPCRouter({
         const steps = [
           {
             id: 1,
-            text: `Add ${yogurtAmount} Greek yogurt and ${milkAmount} milk to a jar, then whisk until smooth.`,
+            text: `Add ${yogurtAmount} Greek yogurt to a jar.`,
             checked: false,
-            ingredientIds: [yogurtId, milkId].filter((id): id is string =>
-              Boolean(id),
-            ),
+            ingredientIds: [yogurtId].filter((id): id is string => Boolean(id)),
           },
           {
             id: 2,
+            text: `Pour in ${milkAmount} milk and whisk until smooth.`,
+            checked: false,
+            ingredientIds: [milkId].filter((id): id is string => Boolean(id)),
+          },
+          {
+            id: 3,
             text: `Stir in ${chiaAmount} chia seeds and mix well so the seeds are evenly distributed.`,
             checked: false,
             ingredientIds: [chiaId].filter((id): id is string => Boolean(id)),
           },
           {
-            id: 3,
+            id: 4,
             text: "Rest for 10 minutes, stir once more, then cover and refrigerate until thickened.",
             checked: false,
             ingredientIds: [chiaId].filter((id): id is string => Boolean(id)),
           },
           {
-            id: 4,
+            id: 5,
             text: `Top with ${raspberriesAmount} raspberries before serving.`,
             checked: false,
             ingredientIds: [raspberriesId].filter((id): id is string =>
