@@ -18,6 +18,7 @@ import {
   cookingTools,
   generateCookingSystemPrompt,
 } from "../tools/cookingTools";
+import { requestWeighing } from "../utils/weighingUtils";
 
 const MODEL = "gemini-3.1-flash-live-preview";
 
@@ -104,6 +105,33 @@ export function useCookingSession({
           setTimeout(() => {
             onSessionEnd?.();
           }, 1000);
+          break;
+        case "weigh_ingredient":
+          // Handle weighing asynchronously
+          (async () => {
+            try {
+              const result = await requestWeighing();
+              if (result.success && result.weight) {
+                respond({
+                  success: true,
+                  weight: result.weight,
+                  message: `Ingredient weighed: ${result.weight}g`,
+                });
+              } else {
+                respond({
+                  success: false,
+                  error:
+                    result.error || "Failed to get weight - please try again",
+                });
+              }
+            } catch (error) {
+              respond({
+                success: false,
+                error:
+                  error instanceof Error ? error.message : "Weighing failed",
+              });
+            }
+          })();
           break;
         default:
           respond("unknown tool");
