@@ -19,9 +19,24 @@ const fridgeAgentOutputSchema = z.object({
 
 export type FridgeAgentOutput = z.infer<typeof fridgeAgentOutputSchema>
 
+function splitDataUrl(dataUrl: string): { mediaType: string; base64Data: string } {
+  const match = dataUrl.match(/^data:([^;,]+);base64,(.+)$/)
+
+  if (!match) {
+    throw new Error('Invalid image data URL format')
+  }
+
+  return {
+    mediaType: match[1],
+    base64Data: match[2],
+  }
+}
+
 export async function runFridgeVisionAgent(
   imageDataUrl: string
 ): Promise<FridgeAgentOutput> {
+  const { mediaType, base64Data } = splitDataUrl(imageDataUrl)
+
   const { output } = await generateText({
     model: gemini,
     output: Output.object({
@@ -42,7 +57,8 @@ export async function runFridgeVisionAgent(
           },
           {
             type: 'image',
-            image: imageDataUrl,
+            image: base64Data,
+            mediaType,
           },
         ],
       },
