@@ -14,6 +14,7 @@ interface CookingSessionProps {
   micId: string;
   onEnd: () => void;
   onSessionEnd: () => void;
+  recipeTitle?: string;
 }
 
 export function CookingSession({
@@ -21,6 +22,7 @@ export function CookingSession({
   micId,
   onEnd,
   onSessionEnd,
+  recipeTitle,
 }: CookingSessionProps) {
   const {
     videoRef,
@@ -29,7 +31,7 @@ export function CookingSession({
     isProcessing,
     connect,
     disconnect,
-  } = useCookingSession({ cameraId, micId, onSessionEnd });
+  } = useCookingSession({ cameraId, micId, onSessionEnd, recipeTitle });
 
   const [nextZ, setNextZ] = useState(20);
   const [zIndexes, setZIndexes] = useState({

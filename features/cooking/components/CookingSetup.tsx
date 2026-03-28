@@ -9,9 +9,14 @@ interface DeviceInfo {
 
 interface CookingSetupProps {
   onStart: (cameraId: string, micId: string) => void;
+  recipeInfo?: {
+    title: string;
+    stepsCount: number;
+    timeMinutes?: number;
+  } | null;
 }
 
-export function CookingSetup({ onStart }: CookingSetupProps) {
+export function CookingSetup({ onStart, recipeInfo }: CookingSetupProps) {
   const [cameras, setCameras] = useState<DeviceInfo[]>([]);
   const [microphones, setMicrophones] = useState<DeviceInfo[]>([]);
   const [selectedCamera, setSelectedCamera] = useState("");
@@ -208,17 +213,26 @@ export function CookingSetup({ onStart }: CookingSetupProps) {
           )}
 
           {/* Recipe preview */}
-          <div className="mb-5 bg-orange-500/8 border border-orange-400/15 rounded-2xl px-4 py-3">
-            <p className="text-orange-300/70 text-xs uppercase tracking-widest mb-1">
-              Przepis
-            </p>
-            <p className="text-white/80 text-sm font-medium">
-              🍝 Spaghetti Carbonara
-            </p>
-            <p className="text-white/35 text-xs mt-0.5">
-              8 kroków · ok. 30 minut
-            </p>
-          </div>
+          {recipeInfo && (
+            <div className="mb-5 bg-orange-500/8 border border-orange-400/15 rounded-2xl px-4 py-3">
+              <p className="text-orange-300/70 text-xs uppercase tracking-widest mb-1">
+                Przepis
+              </p>
+              <p className="text-white/80 text-sm font-medium">
+                {recipeInfo.title}
+              </p>
+              <p className="text-white/35 text-xs mt-0.5">
+                {recipeInfo.stepsCount}{" "}
+                {recipeInfo.stepsCount === 1
+                  ? "krok"
+                  : recipeInfo.stepsCount < 5
+                    ? "kroki"
+                    : "kroków"}
+                {recipeInfo.timeMinutes &&
+                  ` · ok. ${recipeInfo.timeMinutes} minut`}
+              </p>
+            </div>
+          )}
 
           {/* Start button */}
           <button
