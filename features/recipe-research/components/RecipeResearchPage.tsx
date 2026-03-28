@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   CheckCircle,
@@ -47,6 +48,7 @@ import { useRecipeResearch } from "../hooks/useRecipeResearch";
 const FRIDGE_INVENTORY_STORAGE_KEY = "fridge:lastInventory";
 
 export function RecipeResearchPage() {
+  const router = useRouter();
   const [fridgeInventory, setFridgeInventory] =
     useState<FridgeInventory | null>(null);
   const [userRequest, setUserRequest] = useState("");
@@ -190,9 +192,17 @@ export function RecipeResearchPage() {
     };
   }, []);
 
-  const handleResearch = async () => {
-    if (!fridgeInventory || !canSubmit) {
+  const handleResearch = async (requestOverride?: string) => {
+    const effectiveRequest = (requestOverride ?? userRequest).trim();
+    const canSubmitRequest =
+      effectiveRequest.length >= 3 && fridgeNames.length > 0;
+
+    if (!fridgeInventory || !canSubmitRequest) {
       return;
+    }
+
+    if (requestOverride) {
+      setUserRequest(effectiveRequest);
     }
 
     reset();
@@ -246,7 +256,7 @@ export function RecipeResearchPage() {
         fridgeInventory: {
           items: fridgeInventory.items,
         },
-        userRequest: userRequest.trim(),
+        userRequest: effectiveRequest,
       });
 
       clearActivityTimers();
@@ -430,8 +440,7 @@ export function RecipeResearchPage() {
                             variant="outline"
                             size="sm"
                             onClick={() => {
-                              setUserRequest(search);
-                              inputRef.current?.focus();
+                              void handleResearch(search);
                             }}
                             className="rounded-full"
                           >
