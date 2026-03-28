@@ -43,7 +43,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Textarea } from "@/components/ui/textarea";
 import { Recipe3dSection } from "@/features/recipe-3d/components/recipe-3d-section";
 import type { FridgeInventory } from "@/lib/trpc/routers/fridge";
 import type { RecipeResearchResult } from "@/lib/trpc/routers/recipe-research";
@@ -51,41 +50,6 @@ import type { RecipeResearchResult } from "@/lib/trpc/routers/recipe-research";
 import { useRecipeResearch } from "../hooks/useRecipeResearch";
 
 const FRIDGE_INVENTORY_STORAGE_KEY = "fridge:lastInventory";
-
-function RecipeCardSkeleton() {
-  return (
-    <Card className="overflow-hidden rounded-3xl border border-border/60 bg-muted/35 shadow-[inset_1px_1px_0_rgba(255,255,255,0.7),inset_-1px_-1px_0_rgba(0,0,0,0.06),0_12px_26px_rgba(0,0,0,0.08)]">
-      <CardHeader className="pb-3">
-        <Skeleton className="h-7 w-3/4 mb-2" />
-        <Skeleton className="h-4 w-full mb-1" />
-        <Skeleton className="h-4 w-5/6" />
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex gap-2">
-          <Skeleton className="h-6 w-20 rounded-full" />
-          <Skeleton className="h-6 w-24 rounded-full" />
-          <Skeleton className="h-6 w-28 rounded-full" />
-        </div>
-        <Skeleton className="h-4 w-1/2" />
-        <Skeleton className="h-20 w-full rounded-2xl" />
-        <Skeleton className="h-12 w-full rounded-xl" />
-        <Skeleton className="h-10 w-full rounded-xl" />
-      </CardContent>
-    </Card>
-  );
-}
-
-function ActivityItemSkeleton() {
-  return (
-    <div className="flex items-center gap-3">
-      <div className="h-8 w-8 rounded-full bg-muted" />
-      <div className="space-y-2 flex-1">
-        <div className="h-4 w-1/3 rounded bg-muted" />
-        <div className="h-3 w-1/2 rounded bg-muted" />
-      </div>
-    </div>
-  );
-}
 
 export function RecipeResearchPage() {
   const router = useRouter();
@@ -345,6 +309,15 @@ export function RecipeResearchPage() {
                         placeholder="Example: high-protein dinner under 30 minutes, or vegetarian pasta..."
                         value={userRequest}
                         onChange={(event) => setUserRequest(event.target.value)}
+                        onKeyDown={(event) => {
+                          if (
+                            event.key === "Enter" &&
+                            canSubmit &&
+                            !isLoading
+                          ) {
+                            void handleResearch();
+                          }
+                        }}
                         className="h-14 pl-12 text-base rounded-2xl border-2 border-primary/20 focus:border-primary shadow-lg shadow-primary/10 transition-all"
                       />
                     </div>
@@ -416,14 +389,6 @@ export function RecipeResearchPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {isLoading && (
-                <>
-                  <ActivityItemSkeleton />
-                  <ActivityItemSkeleton />
-                  <ActivityItemSkeleton />
-                  <ActivityItemSkeleton />
-                </>
-              )}
               <div className="space-y-3">
                 {liveActivity.map((item, index) => (
                   <div
@@ -450,7 +415,7 @@ export function RecipeResearchPage() {
                       ) : item.status === "error" ? (
                         <XCircle className="h-4 w-4" weight="fill" />
                       ) : (
-                        <Sparkles className="h-4 w-4 animate-pulse" />
+                        <Sparkles className="h-4 w-4" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -487,82 +452,6 @@ export function RecipeResearchPage() {
 
         {result && (
           <>
-            <div className="grid gap-5 lg:grid-cols-3">
-              {result.recipes.map((recipe, index) => (
-                <Card
-                  key={`${recipe.title}-${index}`}
-                  className="overflow-hidden rounded-3xl border border-border/60 bg-muted/35 shadow-[inset_1px_1px_0_rgba(255,255,255,0.7),inset_-1px_-1px_0_rgba(0,0,0,0.06),0_12px_26px_rgba(0,0,0,0.08)]"
-                >
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-xl">{recipe.title}</CardTitle>
-                    <CardDescription>{recipe.summary}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex flex-wrap gap-2">
-                      <Badge className="rounded-full">
-                        Have {recipe.availableIngredients.length}/
-                        {recipe.ingredients.length}
-                      </Badge>
-                      <Badge variant="outline" className="rounded-full">
-                        Missing {recipe.missingCount}
-                      </Badge>
-                      {recipe.fewMissing && recipe.missingCount > 0 && (
-                        <Badge className="rounded-full bg-emerald-600 text-white hover:bg-emerald-600">
-                          Few ingredients missing
-                        </Badge>
-                      )}
-                    </div>
-
-                    {recipe.estimatedTimeMinutes && (
-                      <p className="text-sm text-muted-foreground">
-                        Estimated time: {recipe.estimatedTimeMinutes} minutes
-                      </p>
-                    )}
-
-                    <p className="rounded-2xl border border-border/50 bg-background/70 px-3 py-2 text-sm shadow-[inset_1px_1px_0_rgba(255,255,255,0.65),inset_-1px_-1px_0_rgba(0,0,0,0.05)]">
-                      {recipe.whyItFits}
-                    </p>
-
-                    <div className="space-y-1 text-sm">
-                      <p className="font-medium">Missing ingredients:</p>
-                      {recipe.missingIngredients.length > 0 ? (
-                        <p className="text-muted-foreground">
-                          {recipe.missingIngredients.join(", ")}
-                        </p>
-                      ) : (
-                        <p className="text-emerald-700">
-                          You already have everything.
-                        </p>
-                      )}
-                    </div>
-
-                    <a
-                      href={recipe.sourceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex w-full items-center justify-center rounded-xl border border-border/60 bg-background/80 px-3 py-2 text-sm font-medium no-underline shadow-[inset_1px_1px_0_rgba(255,255,255,0.65),inset_-1px_-1px_0_rgba(0,0,0,0.05)] transition hover:bg-background"
-                    >
-                      Open source recipe
-                    </a>
-
-                    <Recipe3dSection
-                      recipeName={recipe.title}
-                      summary={recipe.summary}
-                      ingredients={recipe.ingredients}
-                    />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {isLoading && (
-              <div className="grid gap-5 lg:grid-cols-3">
-                <RecipeCardSkeleton />
-                <RecipeCardSkeleton />
-                <RecipeCardSkeleton />
-              </div>
-            )}
-
             {!isLoading && (
               <div className="grid gap-6 lg:grid-cols-3">
                 {result.recipes.map((recipe, index) => {
@@ -682,19 +571,26 @@ export function RecipeResearchPage() {
                           </div>
                         )}
 
-                        <a
-                          href={recipe.sourceUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`flex items-center justify-center gap-2 w-full rounded-lg px-3 py-2 text-sm font-medium no-underline transition-colors ${
-                            isTopResult
-                              ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                              : "bg-muted hover:bg-muted/80 text-foreground"
-                          }`}
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          Open Recipe
-                        </a>
+                        <div className="flex flex-col gap-2">
+                          <a
+                            href={recipe.sourceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`flex items-center justify-center gap-2 w-full rounded-lg px-3 py-2 text-sm font-medium no-underline transition-colors ${
+                              isTopResult
+                                ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                                : "bg-muted hover:bg-muted/80 text-foreground"
+                            }`}
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                            Open Recipe
+                          </a>
+                          <Recipe3dSection
+                            recipeName={recipe.title}
+                            summary={recipe.summary}
+                            ingredients={recipe.ingredients}
+                          />
+                        </div>
                       </CardContent>
                     </Card>
                   );
