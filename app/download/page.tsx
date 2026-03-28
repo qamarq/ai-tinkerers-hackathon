@@ -86,10 +86,10 @@ export default function DownloadPage() {
                   Compatible with MacBooks with Force Touch trackpad
                 </p>
                 <Button size="lg" asChild className="h-12 px-8 text-base">
-                  <a href="/wagownik.dmg" download>
+                  <Link href="/gotownik-companion.dmg" download>
                     <Download className="h-5 w-5 mr-2" />
                     Download for macOS
-                  </a>
+                  </Link>
                 </Button>
                 <p className="text-xs text-muted-foreground mt-4">
                   .dmg file for Apple Silicon and Intel Macs

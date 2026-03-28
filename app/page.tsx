@@ -59,6 +59,21 @@ export default function Home() {
               </Button>
             </Link>
           </div>
+          <div className="pt-4">
+            <p className="text-sm text-muted-foreground mb-3">
+              Have a MacBook? Try our companion app
+            </p>
+            <Link href="/download">
+              <Button
+                size="lg"
+                variant="secondary"
+                className="bg-gradient-to-r from-secondary to-secondary/80 hover:from-secondary/90 hover:to-secondary/70 hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
+              >
+                <Download className="mr-2 h-5 w-5" />
+                Download App
+              </Button>
+            </Link>
+          </div>
         </div>
 
         <div className="mt-24 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
