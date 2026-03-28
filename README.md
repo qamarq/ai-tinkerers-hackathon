@@ -79,6 +79,16 @@ Wagownik (macOS)
 
 Happy to serve you our Chia Pudding with Fruits 🙂
 
+## Team
+
+Built by 5 AI Tinkerers from [@wroclaw-tech](https://github.com/wroclaw-tech):
+
+- **Konrad Guzek** ([@kguzek](https://github.com/kguzek))
+- **Szymon Kowaliński** ([@simon-the-shark](https://github.com/simon-the-shark))
+- **Tomasz Trela** ([@tomasz-trela](https://github.com/tomasz-trela))
+- **Kamil Marczak** ([@qamarq](https://github.com/qamarq))
+- **Bartosz Gotowski** ([@Rei-x](https://github.com/Rei-x))
+
 ---
 
-_Built for the AI Tinkerers Hackathon_
+_Built for the AI Tinkerers Hackathon 2026 in Warsaw_
