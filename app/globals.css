@@ -128,3 +128,16 @@
     @apply font-sans;
   }
 }
+
+@keyframes animate-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.animate-progress {
+  animation: animate-progress 0.5s ease-out forwards;
+}

@@ -28,7 +28,7 @@ export function Generate3dButton({
     <Button
       variant="ghost"
       size="sm"
-      className="text-muted-foreground hover:text-muted-foreground/80"
+      className="w-full text-muted-foreground hover:text-muted-foreground/80"
       onClick={() => mutation.mutate({ recipeName, summary, ingredients })}
       disabled={mutation.isPending}
     >
