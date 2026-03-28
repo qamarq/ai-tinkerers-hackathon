@@ -6,6 +6,7 @@ import { trpc } from "@/lib/trpc/client";
 import type {
   RecipeQuickSearchResult,
   RecipeResearchResult,
+  TransformedRecipe,
 } from "@/lib/trpc/routers/recipe-research";
 
 type FindRecipesInput = {
@@ -32,12 +33,22 @@ type SuggestQuickSearchesInput = {
   fridgeIngredients: string[];
 };
 
+type TransformRecipeInput = {
+  title: string;
+  summary: string;
+  ingredients: string[];
+  estimatedTimeMinutes?: number;
+  sourceUrl: string;
+};
+
 export function useRecipeResearch(): {
   findRecipes: (input: FindRecipesInput) => Promise<RecipeResearchResult>;
   suggestQuickSearches: (
     input: SuggestQuickSearchesInput,
   ) => Promise<RecipeQuickSearchResult>;
+  transformRecipe: (input: TransformRecipeInput) => Promise<TransformedRecipe>;
   isSuggestingQuickSearches: boolean;
+  isTransformingRecipe: boolean;
   isLoading: boolean;
   error: string | null;
   reset: () => void;
@@ -45,6 +56,7 @@ export function useRecipeResearch(): {
   const recipeMutation = trpc.recipeResearch.findRecipes.useMutation();
   const quickSearchMutation =
     trpc.recipeResearch.suggestQuickSearches.useMutation();
+  const transformMutation = trpc.recipeResearch.transformRecipe.useMutation();
 
   const findRecipes = useCallback(
     (input: FindRecipesInput) => recipeMutation.mutateAsync(input),
@@ -57,6 +69,11 @@ export function useRecipeResearch(): {
     [quickSearchMutation],
   );
 
+  const transformRecipe = useCallback(
+    (input: TransformRecipeInput) => transformMutation.mutateAsync(input),
+    [transformMutation],
+  );
+
   const reset = useCallback(() => {
     recipeMutation.reset();
   }, [recipeMutation]);
@@ -64,7 +81,9 @@ export function useRecipeResearch(): {
   return {
     findRecipes,
     suggestQuickSearches,
+    transformRecipe,
     isSuggestingQuickSearches: quickSearchMutation.isPending,
+    isTransformingRecipe: transformMutation.isPending,
     isLoading: recipeMutation.isPending,
     error: recipeMutation.error?.message ?? null,
     reset,

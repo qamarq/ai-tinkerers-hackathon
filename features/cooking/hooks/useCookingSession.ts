@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 
 import type {
   ConnectionState,
@@ -14,7 +14,10 @@ import {
 } from "@/features/live/utils/geminiLiveClient";
 
 import { ingredientsAtom, stepsAtom, timerAtom } from "../atoms/cookingAtoms";
-import { COOKING_SYSTEM_PROMPT, cookingTools } from "../tools/cookingTools";
+import {
+  cookingTools,
+  generateCookingSystemPrompt,
+} from "../tools/cookingTools";
 
 const MODEL = "gemini-3.1-flash-live-preview";
 
@@ -22,10 +25,12 @@ export function useCookingSession({
   cameraId,
   micId,
   onSessionEnd,
+  recipeTitle,
 }: {
   cameraId: string;
   micId: string;
   onSessionEnd?: () => void;
+  recipeTitle?: string;
 }) {
   const [connectionState, setConnectionState] =
     useState<ConnectionState>("disconnected");
@@ -40,6 +45,8 @@ export function useCookingSession({
   const audioContextRef = useRef<AudioContext | null>(null);
   const processorRef = useRef<ScriptProcessorNode | null>(null);
 
+  const ingredients = useAtomValue(ingredientsAtom);
+  const steps = useAtomValue(stepsAtom);
   const setIngredients = useSetAtom(ingredientsAtom);
   const setSteps = useSetAtom(stepsAtom);
   const setTimer = useSetAtom(timerAtom);
@@ -198,11 +205,18 @@ export function useCookingSession({
       const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY ?? "";
       if (!apiKey) throw new Error("NEXT_PUBLIC_GEMINI_API_KEY not set");
 
+      // Generate dynamic system prompt based on current recipe
+      const systemPrompt = generateCookingSystemPrompt(
+        recipeTitle || "Your Recipe",
+        ingredients,
+        steps,
+      );
+
       const clientConfig: GeminiLiveConfig = {
         model: MODEL,
         apiKey,
         voiceName: "Kore",
-        systemInstruction: COOKING_SYSTEM_PROMPT,
+        systemInstruction: systemPrompt,
         tools: [cookingTools],
         onConnected: () => {
           setConnectionState("connected");
@@ -262,7 +276,16 @@ export function useCookingSession({
       console.error("Connect error:", error);
       setConnectionState("error");
     }
-  }, [cameraId, micId, captureVideoFrame, startAudioCapture, handleToolCall]);
+  }, [
+    cameraId,
+    micId,
+    captureVideoFrame,
+    startAudioCapture,
+    handleToolCall,
+    recipeTitle,
+    ingredients,
+    steps,
+  ]);
 
   const disconnect = useCallback(() => {
     if (videoIntervalRef.current) {
