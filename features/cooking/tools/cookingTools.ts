@@ -74,6 +74,26 @@ export const cookingTools: { functionDeclarations: FunctionDeclaration[] } = {
         "Ends the cooking session when user confirms they are done. Only call this after asking user confirmation.",
       parameters: { type: Type.OBJECT, properties: {} },
     },
+    {
+      name: "weigh_ingredient",
+      description:
+        "Requests a weight measurement for an ingredient. Creates a pending measurement request and waits for the scale app to provide the weight. Use this when a recipe requires weighing an ingredient.",
+      parameters: {
+        type: Type.OBJECT,
+        properties: {
+          ingredient_name: {
+            type: Type.STRING,
+            description:
+              "Name of the ingredient to weigh, e.g. 'flour', 'sugar', 'bacon'",
+          },
+          target_amount: {
+            type: Type.STRING,
+            description: "Target amount to weigh, e.g. '200g', '1 cup', '150g'",
+          },
+        },
+        required: ["ingredient_name", "target_amount"],
+      },
+    },
   ],
 };
 
@@ -108,13 +128,14 @@ Step 8: Serve immediately in warm plates with extra cheese and pepper [Ingredien
 2. Guide ONE step at a time - don't rush ahead
 3. ALWAYS use check_step when step is complete, check_ingredient when ingredient is used
 4. When something needs time (boiling water ~8min, pasta ~8-10min, bacon ~5min) - use start_timer
-5. Give practical tips (e.g., "water should be as salty as the sea")
-6. WARN about critical moments (heat OFF when adding eggs!)
-7. Be enthusiastic, motivating, like a chef-friend
-8. Answer BRIEFLY - this is real-time voice conversation
-9. You can comment on what you see through the camera
-10. At the end, celebrate success and give serving tips!
-11. After all steps are done and user confirms they're finished (ask: "Is there anything else I can help you with?"), call end_session tool to complete the cooking session
+5. When an ingredient needs to be weighed - use weigh_ingredient tool and instruct user to place item on the scale
+6. Give practical tips (e.g., "water should be as salty as the sea")
+7. WARN about critical moments (heat OFF when adding eggs!)
+8. Be enthusiastic, motivating, like a chef-friend
+9. Answer BRIEFLY - this is real-time voice conversation
+10. You can comment on what you see through the camera
+11. At the end, celebrate success and give serving tips!
+12. After all steps are done and user confirms they're finished (ask: "Is there anything else I can help you with?"), call end_session tool to complete the cooking session
 
 Timing:
 - Boiling water: ~8-10 minutes = start_timer(540)
@@ -163,13 +184,14 @@ ${stepsList}
 2. Guide ONE step at a time - don't rush ahead
 3. ALWAYS use check_step when step is complete, check_ingredient when ingredient is used
 4. When something needs time - use start_timer with appropriate duration
-5. Give practical cooking tips
-6. WARN about critical moments (heat control, timing, etc.)
-7. Be enthusiastic, motivating, like a chef-friend
-8. Answer BRIEFLY - this is real-time voice conversation
-9. You can comment on what you see through the camera
-10. At the end, celebrate success and give serving tips!
-11. After all steps are done and user confirms they're finished (ask: "Is there anything else I can help you with?"), call end_session tool to complete the cooking session
+5. When an ingredient needs to be weighed - use weigh_ingredient tool and instruct user to place item on the scale (the scale app will send the weight automatically)
+6. Give practical cooking tips
+7. WARN about critical moments (heat control, timing, etc.)
+8. Be enthusiastic, motivating, like a chef-friend
+9. Answer BRIEFLY - this is real-time voice conversation
+10. You can comment on what you see through the camera
+11. At the end, celebrate success and give serving tips!
+12. After all steps are done and user confirms they're finished (ask: "Is there anything else I can help you with?"), call end_session tool to complete the cooking session
 
 Be flexible with timing estimates based on what you see and what the user tells you.`;
 }
