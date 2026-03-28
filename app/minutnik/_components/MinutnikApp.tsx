@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Timer as TimerIcon } from "@phosphor-icons/react";
 
 import { TimerOverlay } from "./TimerOverlay";
@@ -167,15 +168,20 @@ export function MinutnikApp() {
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 pointer-events-none">
         <div className="flex items-center justify-between p-4">
-          <div className="flex items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-md pointer-events-auto">
+          <Link
+            href="/"
+            className="flex items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-md pointer-events-auto hover:bg-black/70 transition-colors"
+          >
             <TimerIcon size={20} weight="fill" className="text-white" />
             <span className="text-sm font-semibold text-white">Minutnik</span>
-            {timers.length > 0 && (
+          </Link>
+          {timers.length > 0 && (
+            <div className="flex items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-md pointer-events-auto">
               <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-white/20 px-1.5 text-xs font-medium text-white">
                 {activeCount}/{timers.length}
               </span>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
 
