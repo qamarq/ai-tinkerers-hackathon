@@ -55,6 +55,7 @@ export function RecipeResearchPage() {
   const [liveActivity, setLiveActivity] = useState<
     RecipeResearchResult["activity"]
   >([]);
+  const [fakeProgress, setFakeProgress] = useState(0);
   const activityTimersRef = useRef<number[]>([]);
   const completedQuickSearchSeedRef = useRef<string | null>(null);
   const inFlightQuickSearchSeedRef = useRef<string | null>(null);
@@ -91,6 +92,22 @@ export function RecipeResearchPage() {
       inputRef.current.focus();
     }
   }, [result, isLoading]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      setFakeProgress(0);
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      setFakeProgress((prev) => {
+        if (prev >= 90) return prev;
+        return prev + Math.random() * 15;
+      });
+    }, 500);
+
+    return () => window.clearInterval(interval);
+  }, [isLoading]);
 
   const fridgeNames = useMemo(
     () => fridgeInventory?.items.map((item) => item.name) ?? [],
@@ -542,7 +559,7 @@ export function RecipeResearchPage() {
                     </div>
                     {item.status === "pending" && isLoading && (
                       <div className="w-16">
-                        <Progress value={33} className="h-1.5" />
+                        <Progress value={fakeProgress} className="h-1.5" />
                       </div>
                     )}
                   </div>
@@ -674,18 +691,25 @@ export function RecipeResearchPage() {
                         )}
 
                         <div className="flex flex-col gap-2">
+                          <Button
+                            onClick={() => router.push("/cooking")}
+                            className={`w-full gap-2 ${
+                              isTopResult
+                                ? ""
+                                : "bg-muted hover:bg-muted/80 text-foreground"
+                            }`}
+                          >
+                            <Flame className="h-4 w-4" />
+                            Start Cooking
+                          </Button>
                           <a
                             href={recipe.sourceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`flex items-center justify-center gap-2 w-full rounded-lg px-3 py-2 text-sm font-medium no-underline transition-colors ${
-                              isTopResult
-                                ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                                : "bg-muted hover:bg-muted/80 text-foreground"
-                            }`}
+                            className="flex items-center justify-center gap-2 w-full rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground no-underline hover:text-foreground transition-colors"
                           >
                             <ExternalLink className="h-4 w-4" />
-                            Open Recipe
+                            View Source
                           </a>
                           <Recipe3dSection
                             recipeName={recipe.title}
@@ -733,20 +757,6 @@ export function RecipeResearchPage() {
                   ))}
                 </CardContent>
               </Card>
-            </div>
-
-            <div className="flex justify-center pt-4">
-              <Button
-                asChild
-                size="lg"
-                className="rounded-xl gap-2 shadow-lg shadow-primary/25"
-              >
-                <Link href="/cooking">
-                  <Flame className="h-5 w-5" />
-                  Start Cooking with These Recipes
-                  <ArrowRight className="h-5 w-5" />
-                </Link>
-              </Button>
             </div>
           </>
         )}
