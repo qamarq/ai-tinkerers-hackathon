@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint:style": "eslint",
+    "lint:style:fix": "eslint",
     "lint:typecheck": "tsc --noEmit",
     "db:studio": "drizzle-kit studio",
     "db:generate": "drizzle-kit generate",
