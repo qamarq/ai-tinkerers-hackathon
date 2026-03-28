@@ -2,14 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   CheckCircle,
   ChefHat,
-  Clock,
   CookingPot,
-  Fire,
   Leaf,
   Lightbulb,
   LinkSimple,
@@ -17,7 +14,6 @@ import {
   Star,
   Timer,
   Tray,
-  Users,
   XCircle,
 } from "@phosphor-icons/react";
 import {
@@ -25,7 +21,6 @@ import {
   BookOpen,
   ExternalLink,
   Flame,
-  Home,
   Link2,
   Sparkles,
 } from "lucide-react";
@@ -52,18 +47,28 @@ import { useRecipeResearch } from "../hooks/useRecipeResearch";
 const FRIDGE_INVENTORY_STORAGE_KEY = "fridge:lastInventory";
 
 export function RecipeResearchPage() {
-  const router = useRouter();
   const [fridgeInventory, setFridgeInventory] =
     useState<FridgeInventory | null>(null);
   const [userRequest, setUserRequest] = useState("");
   const [result, setResult] = useState<RecipeResearchResult | null>(null);
+  const [quickSearches, setQuickSearches] = useState<string[]>([]);
   const [liveActivity, setLiveActivity] = useState<
     RecipeResearchResult["activity"]
   >([]);
   const activityTimersRef = useRef<number[]>([]);
+  const completedQuickSearchSeedRef = useRef<string | null>(null);
+  const inFlightQuickSearchSeedRef = useRef<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { findRecipes, isLoading, error, reset } = useRecipeResearch();
+  const {
+    findRecipes,
+    suggestQuickSearches,
+    isSuggestingQuickSearches,
+    isLoading,
+    error,
+    reset,
+  } = useRecipeResearch();
+  const suggestQuickSearchesRef = useRef(suggestQuickSearches);
 
   useEffect(() => {
     const saved = window.localStorage.getItem(FRIDGE_INVENTORY_STORAGE_KEY);
@@ -93,6 +98,67 @@ export function RecipeResearchPage() {
   );
 
   const canSubmit = userRequest.trim().length >= 3 && fridgeNames.length > 0;
+  const quickSearchSeed = useMemo(
+    () =>
+      fridgeNames
+        .map((name) => name.trim().toLowerCase())
+        .filter(Boolean)
+        .sort()
+        .join("|"),
+    [fridgeNames],
+  );
+
+  useEffect(() => {
+    suggestQuickSearchesRef.current = suggestQuickSearches;
+  }, [suggestQuickSearches]);
+
+  useEffect(() => {
+    if (!quickSearchSeed) {
+      completedQuickSearchSeedRef.current = null;
+      inFlightQuickSearchSeedRef.current = null;
+      return;
+    }
+
+    if (completedQuickSearchSeedRef.current === quickSearchSeed) {
+      return;
+    }
+
+    if (inFlightQuickSearchSeedRef.current === quickSearchSeed) {
+      return;
+    }
+
+    inFlightQuickSearchSeedRef.current = quickSearchSeed;
+
+    let cancelled = false;
+
+    const suggest = async () => {
+      try {
+        const response = await suggestQuickSearchesRef.current({
+          fridgeIngredients: fridgeNames,
+        });
+
+        if (!cancelled) {
+          setQuickSearches(response.searches);
+          completedQuickSearchSeedRef.current = quickSearchSeed;
+          inFlightQuickSearchSeedRef.current = null;
+        }
+      } catch {
+        if (!cancelled) {
+          setQuickSearches([]);
+          inFlightQuickSearchSeedRef.current = null;
+        }
+      }
+    };
+
+    void suggest();
+
+    return () => {
+      cancelled = true;
+      if (inFlightQuickSearchSeedRef.current === quickSearchSeed) {
+        inFlightQuickSearchSeedRef.current = null;
+      }
+    };
+  }, [fridgeNames, quickSearchSeed]);
 
   const clearActivityTimers = () => {
     for (const timerId of activityTimersRef.current) {
@@ -323,6 +389,42 @@ export function RecipeResearchPage() {
                     </div>
                   </div>
                 </div>
+
+                {fridgeNames.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                      Quick searches
+                    </p>
+                    {isSuggestingQuickSearches && quickSearches.length === 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        <Badge
+                          variant="secondary"
+                          className="rounded-full px-3 py-1"
+                        >
+                          Generating suggestions...
+                        </Badge>
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                        {quickSearches.map((search) => (
+                          <Button
+                            key={search}
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setUserRequest(search);
+                              inputRef.current?.focus();
+                            }}
+                            className="rounded-full"
+                          >
+                            {search}
+                          </Button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {error && (
                   <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 flex items-start gap-3">
