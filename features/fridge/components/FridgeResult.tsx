@@ -279,7 +279,7 @@ const LoadingState: React.FC = () => {
               ref={(el) => {
                 stepElementRefs.current[index] = el;
               }}
-              className={`flex items-center gap-3 rounded-xl border p-3 transition-all scroll-mt-4 ${
+              className={`flex items-center gap-3 rounded-xl border p-3 transition-all -scroll-mt-50 ${
                 step.status === "complete"
                   ? "border-green-200 bg-green-50/50"
                   : step.status === "active"
