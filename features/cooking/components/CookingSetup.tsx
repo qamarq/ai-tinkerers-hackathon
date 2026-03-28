@@ -1,6 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { ArrowLeft, Camera, ChefHat, Mic, ShieldAlert } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 
 interface DeviceInfo {
   deviceId: string;
@@ -94,160 +100,165 @@ export function CookingSetup({ onStart, recipeInfo }: CookingSetupProps) {
     onStart(selectedCamera, selectedMic);
   };
 
+  const stepsLabel =
+    recipeInfo?.stepsCount === 1
+      ? "krok"
+      : recipeInfo && recipeInfo.stepsCount < 5
+        ? "kroki"
+        : "krokow";
+
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
-      {/* Background glow orbs */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-125 h-125 bg-orange-600/20 rounded-full blur-[120px] animate-pulse" />
-        <div
-          className="absolute bottom-1/4 right-1/3 w-100 h-100 bg-amber-500/15 rounded-full blur-[100px] animate-pulse"
-          style={{ animationDelay: "1s" }}
-        />
-        <div
-          className="absolute top-2/3 left-1/2 w-75 h-75 bg-red-700/10 rounded-full blur-[80px] animate-pulse"
-          style={{ animationDelay: "2s" }}
-        />
-      </div>
-
-      {/* Grid overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
-
-      <div className="relative z-10 w-full max-w-md mx-4">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="text-6xl mb-4 drop-shadow-2xl">👨‍🍳</div>
-          <h1 className="text-4xl font-bold text-white tracking-tight">
-            Chef <span className="text-orange-400">AI</span>
-          </h1>
-          <p className="text-white/40 mt-2 text-sm tracking-wide">
-            Twój asystent kulinarny z AI
-          </p>
+    <div className="min-h-screen bg-linear-to-b from-primary/5 via-background to-background">
+      <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mb-8 flex items-center justify-between">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Gotownik.love
+          </Link>
+          <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+            <ChefHat className="h-3.5 w-3.5" />
+            Cooking setup
+          </div>
         </div>
 
-        {/* Main card */}
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-2xl shadow-black/60">
-          {/* Camera preview */}
-          <div className="relative mb-5 rounded-2xl overflow-hidden aspect-video bg-black/40 border border-white/8">
-            <video
-              ref={videoRef}
-              autoPlay
-              muted
-              playsInline
-              className="w-full h-full object-cover"
-            />
-            {loading && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-white/40 text-sm">Ładowanie kamery...</div>
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]">
+          <Card className="overflow-hidden border-border/70 shadow-xl">
+            <CardHeader className="border-b bg-muted/35">
+              <CardTitle className="text-xl">Podglad kamery</CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 sm:p-6">
+              <div className="relative overflow-hidden rounded-xl border bg-black aspect-video">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  muted
+                  playsInline
+                  className="h-full w-full object-cover"
+                />
+
+                {loading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/70">
+                    <p className="text-sm text-white/80">Ladowanie kamery...</p>
+                  </div>
+                )}
+
+                {!loading && !permissionGranted && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/75 px-4">
+                    <div className="text-center text-white/90">
+                      <ShieldAlert className="mx-auto mb-2 h-7 w-7" />
+                      <p className="text-sm">
+                        Brak dostepu do kamery i mikrofonu
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {permissionGranted && (
+                  <div className="absolute right-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/60 px-2.5 py-1 text-xs font-medium text-white">
+                    <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                    LIVE
+                  </div>
+                )}
               </div>
-            )}
-            {!loading && !permissionGranted && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/60">
-                <div className="text-center">
-                  <div className="text-3xl mb-2">🚫</div>
-                  <p className="text-white/60 text-sm">
-                    Brak dostępu do kamery
+            </CardContent>
+          </Card>
+
+          <Card className="border-border/70 shadow-xl">
+            <CardHeader className="space-y-2 border-b bg-muted/30">
+              <CardTitle className="text-xl">
+                <span className="inline-flex items-center gap-2">
+                  <ChefHat className="h-5 w-5 text-primary" />
+                  Gotownik.love
+                </span>
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Wybierz urzadzenia i rozpocznij gotowanie.
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-5 p-4 sm:p-6">
+              {permissionGranted ? (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="camera-select"
+                      className="text-sm font-medium"
+                    >
+                      <span className="inline-flex items-center gap-2">
+                        <Camera className="h-4 w-4" />
+                        Kamera
+                      </span>
+                    </Label>
+                    <select
+                      id="camera-select"
+                      value={selectedCamera}
+                      onChange={(e) => setSelectedCamera(e.target.value)}
+                      className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none transition-colors focus-visible:border-ring"
+                    >
+                      {cameras.map((cam) => (
+                        <option key={cam.deviceId} value={cam.deviceId}>
+                          {cam.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="mic-select" className="text-sm font-medium">
+                      <span className="inline-flex items-center gap-2">
+                        <Mic className="h-4 w-4" />
+                        Mikrofon
+                      </span>
+                    </Label>
+                    <select
+                      id="mic-select"
+                      value={selectedMic}
+                      onChange={(e) => setSelectedMic(e.target.value)}
+                      className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none transition-colors focus-visible:border-ring"
+                    >
+                      {microphones.map((mic) => (
+                        <option key={mic.deviceId} value={mic.deviceId}>
+                          {mic.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              ) : (
+                !loading && (
+                  <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+                    Wymagany dostep do kamery i mikrofonu.
+                  </div>
+                )
+              )}
+
+              {recipeInfo && (
+                <div className="rounded-lg border bg-muted/35 p-4">
+                  <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Przepis
+                  </p>
+                  <p className="text-sm font-semibold leading-snug">
+                    {recipeInfo.title}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {recipeInfo.stepsCount} {stepsLabel}
+                    {recipeInfo.timeMinutes &&
+                      ` · ok. ${recipeInfo.timeMinutes} minut`}
                   </p>
                 </div>
-              </div>
-            )}
-            {permissionGranted && (
-              <div className="absolute top-2 right-2 flex items-center gap-1.5 bg-black/50 backdrop-blur-md rounded-full px-2.5 py-1">
-                <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-white/70 text-xs font-medium">LIVE</span>
-              </div>
-            )}
-          </div>
+              )}
 
-          {/* Device selectors */}
-          {permissionGranted && (
-            <div className="space-y-3 mb-5">
-              <div>
-                <label className="block text-white/40 text-xs uppercase tracking-widest mb-1.5 px-1">
-                  📹 Kamera
-                </label>
-                <select
-                  value={selectedCamera}
-                  onChange={(e) => setSelectedCamera(e.target.value)}
-                  className="w-full bg-white/8 border border-white/15 text-white rounded-xl px-4 py-2.5 text-sm outline-none focus:border-orange-400/50 transition-colors appearance-none cursor-pointer"
-                >
-                  {cameras.map((cam) => (
-                    <option
-                      key={cam.deviceId}
-                      value={cam.deviceId}
-                      className="bg-gray-900 text-white"
-                    >
-                      {cam.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-white/40 text-xs uppercase tracking-widest mb-1.5 px-1">
-                  🎤 Mikrofon
-                </label>
-                <select
-                  value={selectedMic}
-                  onChange={(e) => setSelectedMic(e.target.value)}
-                  className="w-full bg-white/8 border border-white/15 text-white rounded-xl px-4 py-2.5 text-sm outline-none focus:border-orange-400/50 transition-colors appearance-none cursor-pointer"
-                >
-                  {microphones.map((mic) => (
-                    <option
-                      key={mic.deviceId}
-                      value={mic.deviceId}
-                      className="bg-gray-900 text-white"
-                    >
-                      {mic.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          )}
-
-          {/* Recipe preview */}
-          {recipeInfo && (
-            <div className="mb-5 bg-orange-500/8 border border-orange-400/15 rounded-2xl px-4 py-3">
-              <p className="text-orange-300/70 text-xs uppercase tracking-widest mb-1">
-                Przepis
-              </p>
-              <p className="text-white/80 text-sm font-medium">
-                {recipeInfo.title}
-              </p>
-              <p className="text-white/35 text-xs mt-0.5">
-                {recipeInfo.stepsCount}{" "}
-                {recipeInfo.stepsCount === 1
-                  ? "krok"
-                  : recipeInfo.stepsCount < 5
-                    ? "kroki"
-                    : "kroków"}
-                {recipeInfo.timeMinutes &&
-                  ` · ok. ${recipeInfo.timeMinutes} minut`}
-              </p>
-            </div>
-          )}
-
-          {/* Start button */}
-          <button
-            onClick={handleStart}
-            disabled={!permissionGranted || !selectedCamera}
-            className="w-full relative overflow-hidden bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl text-base transition-all duration-200 shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:scale-[1.02] active:scale-[0.98]"
-          >
-            <span className="relative z-10">🍳 Let&apos;s Cook!</span>
-          </button>
-
-          {!permissionGranted && !loading && (
-            <p className="text-center text-white/30 text-xs mt-3">
-              Wymagany dostęp do kamery i mikrofonu
-            </p>
-          )}
+              <Button
+                onClick={handleStart}
+                disabled={!permissionGranted || !selectedCamera}
+                className="h-11 w-full"
+              >
+                Rozpocznij gotowanie
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
