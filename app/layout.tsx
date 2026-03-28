@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 
 import "./globals.css";
 
+export const dynamic = "force-static";
+
 const sourceSans3 = Source_Sans_3({
   subsets: ["latin"],
   variable: "--font-sans",
