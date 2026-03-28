@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Camera } from "@phosphor-icons/react";
 
 import { Button } from "@/components/ui/button";
