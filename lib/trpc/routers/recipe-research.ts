@@ -35,6 +35,7 @@ const recipeResearchInputSchema = z.object({
 
 const quickSearchInputSchema = z.object({
   fridgeIngredients: z.array(z.string().min(1)).min(1).max(50),
+  pinYogurtChiaFirstResult: z.boolean().optional(),
 });
 
 const recipeRecommendationSchema = z.object({
@@ -124,6 +125,23 @@ const transformRecipeOutputSchema = z.object({
   sourceUrl: z.string().url(),
 });
 
+function splitIngredientAndAmount(input: string): {
+  name: string;
+  amount: string;
+} {
+  const value = input.trim();
+  const match = value.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+
+  if (!match) {
+    return { name: value, amount: "amount" };
+  }
+
+  const name = match[1]?.trim() || value;
+  const amount = match[2]?.trim() || "amount";
+
+  return { name, amount };
+}
+
 export type RecipeResearchResult = z.infer<typeof recipeResearchOutputSchema>;
 export type RecipeQuickSearchResult = z.infer<typeof quickSearchOutputSchema>;
 export type TransformedRecipe = z.infer<typeof transformRecipeOutputSchema>;
@@ -142,6 +160,7 @@ export const recipeResearchRouter = createTRPCRouter({
 
       return runRecipeQuickSearchAgent({
         fridgeIngredients: input.fridgeIngredients,
+        pinYogurtChiaFirstResult: input.pinYogurtChiaFirstResult,
       });
     }),
   findRecipes: publicProcedure
@@ -195,12 +214,16 @@ export const recipeResearchRouter = createTRPCRouter({
       }
 
       // Transform ingredients with IDs
-      const ingredients = input.ingredients.map((ing, index) => ({
-        id: (index + 1).toString(),
-        name: ing,
-        amount: "as needed",
-        checked: false,
-      }));
+      const ingredients = input.ingredients.map((ing, index) => {
+        const { name, amount } = splitIngredientAndAmount(ing);
+
+        return {
+          id: (index + 1).toString(),
+          name,
+          amount,
+          checked: false,
+        };
+      });
 
       // Create ingredient mapping for AI
       const ingredientList = ingredients

@@ -32,6 +32,7 @@ type FindRecipesInput = {
 
 type SuggestQuickSearchesInput = {
   fridgeIngredients: string[];
+  pinYogurtChiaFirstResult?: boolean;
 };
 
 type TransformRecipeInput = {
@@ -88,7 +89,11 @@ export function useRecipeResearch(): {
 
   const suggestQuickSearches = useCallback(
     (input: SuggestQuickSearchesInput) =>
-      quickSearchMutation.mutateAsync(input),
+      quickSearchMutation.mutateAsync({
+        ...input,
+        pinYogurtChiaFirstResult:
+          input.pinYogurtChiaFirstResult ?? isPinnedFirstRecipeEnabled(),
+      }),
     [quickSearchMutation],
   );
 
