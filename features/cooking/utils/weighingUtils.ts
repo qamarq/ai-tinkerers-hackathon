@@ -16,13 +16,14 @@ interface WeighingResult {
 }
 
 /**
- * Creates a new weighing request and polls until weight is received
- * @param maxAttempts Maximum number of polling attempts (default: 60 = 5 minutes)
+ * Creates a new weighing request and polls until no pending records remain,
+ * then fetches the most recent completed measurement.
+ * @param maxAttempts Maximum number of polling attempts (default: 10)
  * @param pollingInterval Polling interval in milliseconds (default: 5000 = 5 seconds)
  * @returns Promise with the weight measurement or error
  */
 export async function requestWeighing(
-  maxAttempts: number = 60,
+  maxAttempts: number = 10,
   pollingInterval: number = 5000,
 ): Promise<WeighingResult> {
   try {
@@ -38,34 +39,34 @@ export async function requestWeighing(
       };
     }
 
-    const { measurement } = (await createResponse.json()) as {
-      measurement: ScaleMeasurement;
-    };
-
-    // Step 2: Poll for the weight
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       await new Promise((resolve) => setTimeout(resolve, pollingInterval));
 
       const checkResponse = await fetch("/api/scale/should-weigh");
       if (!checkResponse.ok) continue;
 
-      const { measurement: currentMeasurement } =
-        (await checkResponse.json()) as {
-          shouldWeigh: boolean;
+      const { shouldWeigh } = (await checkResponse.json()) as {
+        shouldWeigh: boolean;
+      };
+
+      if (!shouldWeigh) {
+        const weightResponse = await fetch("/api/scale/weight");
+        if (!weightResponse.ok) {
+          return { success: false, error: "Failed to fetch weight result" };
+        }
+
+        const { measurement } = (await weightResponse.json()) as {
           measurement: ScaleMeasurement | null;
         };
 
-      // Check if our specific measurement has been completed
-      if (
-        currentMeasurement &&
-        currentMeasurement.id === measurement.id &&
-        currentMeasurement.status === "done" &&
-        currentMeasurement.weight
-      ) {
-        return {
-          success: true,
-          weight: parseFloat(currentMeasurement.weight),
-        };
+        if (measurement?.weight) {
+          return {
+            success: true,
+            weight: parseFloat(measurement.weight),
+          };
+        }
+
+        return { success: false, error: "No completed measurement found" };
       }
     }
 
