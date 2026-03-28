@@ -49,6 +49,9 @@ importers:
       drizzle-orm:
         specifier: ^0.45.2
         version: 0.45.2(@opentelemetry/api@1.9.0)(postgres@3.4.8)
+      jsfeat:
+        specifier: ^0.0.8
+        version: 0.0.8
       next:
         specifier: 16.2.1
         version: 16.2.1(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -5255,6 +5258,9 @@ packages:
     engines: { node: ">=6" }
     hasBin: true
 
+  jsfeat@0.0.8:
+    resolution: {integrity: sha512-wG2Rzv9ywe2KGnX+N8VJtFO0srwyZaRmV8cBjsE52PCNdNJk8nVGtiK9HQ5wZZ5fUxk3wVPqV3zr8KxQjulR3w==}
+
   json-buffer@3.0.1:
     resolution:
       {
@@ -10308,6 +10314,8 @@ snapshots:
       argparse: 2.0.1
 
   jsesc@3.1.0: {}
+
+  jsfeat@0.0.8: {}
 
   json-buffer@3.0.1: {}
 
