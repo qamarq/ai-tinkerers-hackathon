@@ -147,6 +147,12 @@ export function MinutnikApp() {
             dispatch(action);
           }
         }}
+        onPositionChange={(id, x, y) => {
+          dispatch({
+            type: "UPDATE_POSITION",
+            payload: { id, x, y, isLost: false },
+          });
+        }}
       />
 
       {/* Setup popover */}
