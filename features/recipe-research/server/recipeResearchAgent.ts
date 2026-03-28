@@ -179,7 +179,7 @@ Constraints:
 
     return {
       searches: [
-        "quick breakfast",
+        "Quick breakfast",
         ...output.searches
           .map((search) => search.trim().split(/\s+/).slice(0, 4).join(" "))
           .filter(Boolean)
