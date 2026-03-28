@@ -27,6 +27,7 @@ type FindRecipesInput = {
   servings?: number;
   maxPrepMinutes?: number;
   maxMissingIngredients?: number;
+  pinYogurtChiaFirstResult?: boolean;
 };
 
 type SuggestQuickSearchesInput = {
@@ -40,6 +41,23 @@ type TransformRecipeInput = {
   estimatedTimeMinutes?: number;
   sourceUrl: string;
 };
+
+function isPinnedFirstRecipeEnabled(): boolean {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  const flag = window.localStorage.getItem(
+    "recipeResearch:pinYogurtChiaFirstResult",
+  );
+
+  if (!flag) {
+    return false;
+  }
+
+  const normalized = flag.trim().toLowerCase();
+  return normalized === "1" || normalized === "true" || normalized === "on";
+}
 
 export function useRecipeResearch(): {
   findRecipes: (input: FindRecipesInput) => Promise<RecipeResearchResult>;
@@ -59,7 +77,12 @@ export function useRecipeResearch(): {
   const transformMutation = trpc.recipeResearch.transformRecipe.useMutation();
 
   const findRecipes = useCallback(
-    (input: FindRecipesInput) => recipeMutation.mutateAsync(input),
+    (input: FindRecipesInput) =>
+      recipeMutation.mutateAsync({
+        ...input,
+        pinYogurtChiaFirstResult:
+          input.pinYogurtChiaFirstResult ?? isPinnedFirstRecipeEnabled(),
+      }),
     [recipeMutation],
   );
 

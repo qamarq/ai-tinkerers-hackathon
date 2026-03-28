@@ -82,6 +82,7 @@ export interface RecipeResearchAgentInput {
   servings?: number;
   maxPrepMinutes?: number;
   maxMissingIngredients: number;
+  pinYogurtChiaFirstResult?: boolean;
 }
 
 export interface RecipeQuickSearchAgentInput {
@@ -220,6 +221,64 @@ function isValidUrl(value: string): boolean {
   } catch {
     return false;
   }
+}
+
+function buildPinnedYogurtChiaRecipe(
+  fridgeIngredients: string[],
+  maxMissingIngredients: number,
+): RecipeResearchOutput["recipes"][number] {
+  const ingredients = uniqueStrings([
+    "Plain Greek yogurt",
+    "Unsweetened almond milk",
+    "Chia seeds",
+    "Frozen raspberries",
+  ]);
+
+  const availableIngredients = ingredients.filter((ingredient) =>
+    fridgeIngredients.some((fridgeItem) =>
+      ingredientMatch(ingredient, fridgeItem),
+    ),
+  );
+  const missingIngredients = ingredients.filter(
+    (ingredient) => !availableIngredients.includes(ingredient),
+  );
+
+  const totalIngredients = ingredients.length;
+  const missingCount = missingIngredients.length;
+  const matchRatio =
+    totalIngredients === 0 ? 0 : availableIngredients.length / totalIngredients;
+  const fewMissing = missingCount <= maxMissingIngredients;
+  const missingPenalty = Math.min(
+    missingCount / Math.max(maxMissingIngredients + 1, 1),
+    1,
+  );
+  const relevanceScore = 0.98;
+  const fitScore = Math.max(
+    0,
+    Math.min(
+      1,
+      relevanceScore * 0.45 + matchRatio * 0.45 + (1 - missingPenalty) * 0.1,
+    ),
+  );
+
+  return {
+    title: "Yogurt Chia Pudding",
+    sourceUrl: "https://feelgoodfoodie.net/recipe/yogurt-chia-pudding/",
+    sourceTitle: "Feel Good Foodie",
+    summary:
+      "Creamy yogurt chia pudding with a lightly sweet profile, simple ingredients, and an easy make-ahead breakfast format.",
+    whyItFits:
+      "High-protein breakfast that combines yogurt and chia, needs minimal prep, and stores well for make-ahead mornings.",
+    ingredients,
+    availableIngredients,
+    missingIngredients,
+    matchRatio,
+    missingCount,
+    fewMissing,
+    relevanceScore,
+    fitScore,
+    estimatedTimeMinutes: 20,
+  };
 }
 
 export async function runRecipeResearchAgent(
@@ -551,6 +610,56 @@ Output recipes with title, sourceUrl, and ingredients only.`,
     });
   }
 
+  const finalRankedRecipes: RecipeResearchOutput["recipes"] = [
+    ...rankedRecipes,
+  ];
+
+  if (input.pinYogurtChiaFirstResult) {
+    const pinnedFirstRecipe = buildPinnedYogurtChiaRecipe(
+      mergedFridgeIngredients,
+      input.maxMissingIngredients,
+    );
+    const withoutPinnedDuplicate = finalRankedRecipes.filter(
+      (recipe) =>
+        !(
+          recipe.title === pinnedFirstRecipe.title &&
+          recipe.sourceUrl === pinnedFirstRecipe.sourceUrl
+        ),
+    );
+
+    finalRankedRecipes.splice(
+      0,
+      finalRankedRecipes.length,
+      pinnedFirstRecipe,
+      ...withoutPinnedDuplicate,
+    );
+  }
+
+  while (finalRankedRecipes.length > 3) {
+    finalRankedRecipes.pop();
+  }
+
+  while (finalRankedRecipes.length < 3) {
+    finalRankedRecipes.push({
+      title: `Recipe idea ${finalRankedRecipes.length + 1}`,
+      sourceUrl: "https://www.allrecipes.com/",
+      sourceTitle: "Allrecipes",
+      summary:
+        "Fallback recommendation due to incomplete structured extraction.",
+      whyItFits:
+        "This suggestion preserves flow while you can retry with a broader request.",
+      ingredients: [],
+      availableIngredients: [],
+      missingIngredients: [],
+      matchRatio: 0,
+      missingCount: 0,
+      fewMissing: true,
+      relevanceScore: 0.3,
+      fitScore: 0.3,
+      estimatedTimeMinutes: undefined,
+    });
+  }
+
   addActivity({
     type: "analyze",
     status: "complete",
@@ -567,7 +676,7 @@ Output recipes with title, sourceUrl, and ingredients only.`,
 
   return recipeResearchOutputSchema.parse({
     query: searchQuery,
-    recipes: rankedRecipes,
+    recipes: finalRankedRecipes,
     activity,
     sources,
   });
