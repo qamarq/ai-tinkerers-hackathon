@@ -1,4 +1,1 @@
-export {
-  RegistrationFlow,
-  type RegistrationData,
-} from "./components/registration-flow";
+export { RegistrationFlow } from "./components/registration-flow";
