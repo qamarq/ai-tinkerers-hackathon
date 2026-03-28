@@ -8,6 +8,13 @@
       "when": 1774698221338,
       "tag": "0000_material_pepper_potts",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1774704970604,
+      "tag": "0001_nappy_valeria_richards",
+      "breakpoints": true
     }
   ]
 }

@@ -22,6 +22,7 @@
   "dependencies": {
     "@ai-sdk/google": "^3.0.53",
     "@google/genai": "^1.46.0",
+    "@google/model-viewer": "^4.2.0",
     "@mendable/firecrawl-js": "^4.18.0",
     "@phosphor-icons/react": "^2.1.10",
     "@tanstack/react-query": "^5.95.2",
@@ -67,7 +68,7 @@
     "typescript": "^5"
   },
   "lint-staged": {
-    "*": "prettier --write"
+    "*": "prettier --write --ignore-unknown"
   },
   "volta": {
     "node": "24.14.1"
