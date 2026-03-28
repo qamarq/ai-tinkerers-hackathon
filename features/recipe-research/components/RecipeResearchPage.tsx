@@ -457,7 +457,7 @@ export function RecipeResearchPage() {
                     </div>
                     {item.status === "pending" && isLoading && (
                       <div className="w-16">
-                        <Progress value={33} className="h-1.5" />
+                        <Progress value={fakeProgress} className="h-1.5" />
                       </div>
                     )}
                   </div>

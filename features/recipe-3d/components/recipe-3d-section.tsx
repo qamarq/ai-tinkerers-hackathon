@@ -79,7 +79,7 @@ export function Recipe3dSection({
 
   if (phase === "idle") {
     return (
-      <div className="mt-3">
+      <div className="mt-3 flex justify-center">
         <Generate3dButton
           recipeName={recipeName}
           summary={summary}
