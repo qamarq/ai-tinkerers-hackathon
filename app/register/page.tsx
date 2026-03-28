@@ -19,7 +19,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background">
+    <div className="min-h-screen bg-linear-to-b from-primary/5 to-background">
       <RegistrationFlow
         onComplete={handleRegistrationComplete}
         onCancel={handleCancel}
