@@ -13,6 +13,9 @@ importers:
       "@google/genai":
         specifier: ^1.46.0
         version: 1.46.0(@modelcontextprotocol/sdk@1.28.0(zod@4.3.6))
+      "@google/model-viewer":
+        specifier: ^4.2.0
+        version: 4.2.0(three@0.182.0)
       "@mendable/firecrawl-js":
         specifier: ^4.18.0
         version: 4.18.0
@@ -1231,6 +1234,15 @@ packages:
       "@modelcontextprotocol/sdk":
         optional: true
 
+  "@google/model-viewer@4.2.0":
+    resolution:
+      {
+        integrity: sha512-RjpAI5cLs9CdvPcMRsOs8Bea/lNmGTTyaPyl16o9Fv6Qn8VSpgBMmXFr/11yb0hTrsojp2dOACEcY77R8hVUVA==,
+      }
+    engines: { node: ">=6.0.0" }
+    peerDependencies:
+      three: ^0.182.0
+
   "@hono/node-server@1.19.11":
     resolution:
       {
@@ -1598,6 +1610,18 @@ packages:
         integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==,
       }
 
+  "@lit-labs/ssr-dom-shim@1.5.1":
+    resolution:
+      {
+        integrity: sha512-Aou5UdlSpr5whQe8AA/bZG0jMj96CoJIWbGfZ91qieWu5AWUMKw8VR/pAkQkJYvBNhmCcWnZlyyk5oze8JIqYA==,
+      }
+
+  "@lit/reactive-element@2.1.2":
+    resolution:
+      {
+        integrity: sha512-pbCDiVMnne1lYUIaYNN5wrwQXDtHaYtg7YEFPeW+hws6U47WeFvISGUWekPGKWOP1ygrs0ef0o1VJMk1exos5A==,
+      }
+
   "@mendable/firecrawl-js@4.18.0":
     resolution:
       {
@@ -1617,6 +1641,14 @@ packages:
     peerDependenciesMeta:
       "@cfworker/json-schema":
         optional: true
+
+  "@monogrid/gainmap-js@3.4.0":
+    resolution:
+      {
+        integrity: sha512-2Z0FATFHaoYJ8b+Y4y4Hgfn3FRFwuU5zRrk+9dFWp4uGAdHGqVEdP7HP+gLA3X469KXHmfupJaUbKo1b/aDKIg==,
+      }
+    peerDependencies:
+      three: ">= 0.159.0"
 
   "@mswjs/interceptors@0.41.3":
     resolution:
@@ -3069,6 +3101,12 @@ packages:
     resolution:
       {
         integrity: sha512-xMAgYwceFhRA2zY+XbEA7mxYbA093wdiW8Vu6gZPGWy9cmOyU9XesH1tNcEWsKFd5Vzrqx5T3D38PWx1FIIXkA==,
+      }
+
+  "@types/trusted-types@2.0.7":
+    resolution:
+      {
+        integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==,
       }
 
   "@types/validate-npm-package-name@4.0.2":
@@ -5118,6 +5156,12 @@ packages:
       }
     engines: { node: ">= 4" }
 
+  immediate@3.0.6:
+    resolution:
+      {
+        integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==,
+      }
+
   import-fresh@3.3.1:
     resolution:
       {
@@ -5346,6 +5390,12 @@ packages:
         integrity: sha512-+Pgi+vMuUNkJyExiMBt5IlFoMyKnr5zhJ4Uspz58WOhBF5QoIZkFyNHIbBAtHwzVAgk5RtndVNsDRN61/mmDqg==,
       }
     engines: { node: ">=12" }
+
+  is-promise@2.2.2:
+    resolution:
+      {
+        integrity: sha512-+lP4/6lKUBfQjZ2pdxThZvLUAafmZb8OAxFb8XXtiQmS35INgr85hdOGoEs124ez1FCnZJt6jau/T+alh58QFQ==,
+      }
 
   is-promise@4.0.0:
     resolution:
@@ -5652,6 +5702,12 @@ packages:
       }
     engines: { node: ">= 0.8.0" }
 
+  lie@3.3.0:
+    resolution:
+      {
+        integrity: sha512-UaiMJzeWRlEujzAuw5LokY1L5ecNQYZKfmyZ9L7wDHb/p5etKaxXhohBcrw0EYby+G/NA52vRSN4N39dxHAIwQ==,
+      }
+
   lightningcss-android-arm64@1.32.0:
     resolution:
       {
@@ -5782,6 +5838,24 @@ packages:
         integrity: sha512-ME4Fb83LgEgwNw96RKNvKV4VTLuXfoKudAmm2lP8Kk87KaMK0/Xrx/aAkMWmT8mDb+3MlFDspfbCs7adjRxA2g==,
       }
     engines: { node: ">=20.0.0" }
+
+  lit-element@4.2.2:
+    resolution:
+      {
+        integrity: sha512-aFKhNToWxoyhkNDmWZwEva2SlQia+jfG0fjIWV//YeTaWrVnOxD89dPKfigCUspXFmjzOEUQpOkejH5Ly6sG0w==,
+      }
+
+  lit-html@3.3.2:
+    resolution:
+      {
+        integrity: sha512-Qy9hU88zcmaxBXcc10ZpdK7cOLXvXpRoBxERdtqV9QOrfpMZZ6pSYP91LhpPtap3sFMUiL7Tw2RImbe0Al2/kw==,
+      }
+
+  lit@3.3.2:
+    resolution:
+      {
+        integrity: sha512-NF9zbsP79l4ao2SNrH3NkfmFgN/hBYSQo90saIVI1o5GpjAdCPVstVzO1MrLOakHoEhYkrtRjPK6Ob521aoYWQ==,
+      }
 
   locate-path@6.0.0:
     resolution:
@@ -6383,6 +6457,12 @@ packages:
         integrity: sha512-gjVS5hOP+M3wMm5nmNOucbIrqudzs9v/57bWRHQWLYklXqoXKrVfYW2W9+glfGsqtPgpiz5WwyEEB+ksXIx3gQ==,
       }
     engines: { node: ">=18" }
+
+  promise-worker-transferable@1.0.4:
+    resolution:
+      {
+        integrity: sha512-bN+0ehEnrXfxV2ZQvU2PetO0n4gqBD4ulq3MI1WOPLgr7/Mg9yRQkX5+0v1vagr74ZTsl7XtzlaYDo2EuCeYJw==,
+      }
 
   prompts@2.4.2:
     resolution:
@@ -7064,6 +7144,12 @@ packages:
         integrity: sha512-1MOpMXuhGzGL5TTCZFItxCc0AARf1EZFQkGqMm7ERKj8+Hgr5oLvJOVFcC+lRmR8hCe2S3jC4T5D7Vg/d7/fhA==,
       }
     engines: { node: ">=6" }
+
+  three@0.182.0:
+    resolution:
+      {
+        integrity: sha512-GbHabT+Irv+ihI1/f5kIIsZ+Ef9Sl5A1Y7imvS5RQjWgtTPfPnZ43JmlYI7NtCRDK9zir20lQpfg8/9Yd02OvQ==,
+      }
 
   tiny-invariant@1.3.3:
     resolution:
@@ -8112,6 +8198,12 @@ snapshots:
       - supports-color
       - utf-8-validate
 
+  "@google/model-viewer@4.2.0(three@0.182.0)":
+    dependencies:
+      "@monogrid/gainmap-js": 3.4.0(three@0.182.0)
+      lit: 3.3.2
+      three: 0.182.0
+
   "@hono/node-server@1.19.11(hono@4.12.9)":
     dependencies:
       hono: 4.12.9
@@ -8282,6 +8374,12 @@ snapshots:
       "@jridgewell/resolve-uri": 3.1.2
       "@jridgewell/sourcemap-codec": 1.5.5
 
+  "@lit-labs/ssr-dom-shim@1.5.1": {}
+
+  "@lit/reactive-element@2.1.2":
+    dependencies:
+      "@lit-labs/ssr-dom-shim": 1.5.1
+
   "@mendable/firecrawl-js@4.18.0":
     dependencies:
       axios: 1.14.0
@@ -8336,6 +8434,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
     optional: true
+
+  "@monogrid/gainmap-js@3.4.0(three@0.182.0)":
+    dependencies:
+      promise-worker-transferable: 1.0.4
+      three: 0.182.0
 
   "@mswjs/interceptors@0.41.3":
     dependencies:
@@ -9368,6 +9471,8 @@ snapshots:
   "@types/retry@0.12.0": {}
 
   "@types/statuses@2.0.6": {}
+
+  "@types/trusted-types@2.0.7": {}
 
   "@types/validate-npm-package-name@4.0.2": {}
 
@@ -10745,6 +10850,8 @@ snapshots:
 
   ignore@7.0.5: {}
 
+  immediate@3.0.6: {}
+
   import-fresh@3.3.1:
     dependencies:
       parent-module: 1.0.1
@@ -10860,6 +10967,8 @@ snapshots:
   is-obj@3.0.0: {}
 
   is-plain-obj@4.1.0: {}
+
+  is-promise@2.2.2: {}
 
   is-promise@4.0.0: {}
 
@@ -11012,6 +11121,10 @@ snapshots:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
+  lie@3.3.0:
+    dependencies:
+      immediate: 3.0.6
+
   lightningcss-android-arm64@1.32.0:
     optional: true
 
@@ -11080,6 +11193,22 @@ snapshots:
       log-update: 6.1.0
       rfdc: 1.4.1
       wrap-ansi: 9.0.2
+
+  lit-element@4.2.2:
+    dependencies:
+      "@lit-labs/ssr-dom-shim": 1.5.1
+      "@lit/reactive-element": 2.1.2
+      lit-html: 3.3.2
+
+  lit-html@3.3.2:
+    dependencies:
+      "@types/trusted-types": 2.0.7
+
+  lit@3.3.2:
+    dependencies:
+      "@lit/reactive-element": 2.1.2
+      lit-element: 4.2.2
+      lit-html: 3.3.2
 
   locate-path@6.0.0:
     dependencies:
@@ -11430,6 +11559,11 @@ snapshots:
   pretty-ms@9.3.0:
     dependencies:
       parse-ms: 4.0.0
+
+  promise-worker-transferable@1.0.4:
+    dependencies:
+      is-promise: 2.2.2
+      lie: 3.3.0
 
   prompts@2.4.2:
     dependencies:
@@ -12001,6 +12135,8 @@ snapshots:
   tailwindcss@4.2.2: {}
 
   tapable@2.3.2: {}
+
+  three@0.182.0: {}
 
   tiny-invariant@1.3.3: {}
 
