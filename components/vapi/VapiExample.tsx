@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+
 import { VapiButton } from './VapiButton';
 
 export const VapiExample: React.FC = () => {
