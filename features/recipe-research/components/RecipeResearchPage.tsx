@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
 import type { FridgeInventory } from "@/lib/trpc/routers/fridge";
 import type { RecipeResearchResult } from "@/lib/trpc/routers/recipe-research";
 
@@ -27,6 +26,10 @@ export function RecipeResearchPage() {
     useState<FridgeInventory | null>(null);
   const [userRequest, setUserRequest] = useState("");
   const [result, setResult] = useState<RecipeResearchResult | null>(null);
+  const [liveActivity, setLiveActivity] = useState<
+    RecipeResearchResult["activity"]
+  >([]);
+  const activityTimersRef = useRef<number[]>([]);
 
   const { findRecipes, isLoading, error, reset } = useRecipeResearch();
 
@@ -53,6 +56,19 @@ export function RecipeResearchPage() {
 
   const canSubmit = userRequest.trim().length >= 3 && fridgeNames.length > 0;
 
+  const clearActivityTimers = () => {
+    for (const timerId of activityTimersRef.current) {
+      window.clearTimeout(timerId);
+    }
+    activityTimersRef.current = [];
+  };
+
+  useEffect(() => {
+    return () => {
+      clearActivityTimers();
+    };
+  }, []);
+
   const handleResearch = async () => {
     if (!fridgeInventory || !canSubmit) {
       return;
@@ -60,6 +76,49 @@ export function RecipeResearchPage() {
 
     reset();
     setResult(null);
+    clearActivityTimers();
+    setLiveActivity([]);
+
+    const streamPlan: Array<RecipeResearchResult["activity"][number]> = [
+      {
+        type: "search",
+        status: "pending",
+        message: "Searching recipe sources",
+        timestamp: new Date().toISOString(),
+      },
+      {
+        type: "extract",
+        status: "pending",
+        message: "Extracting recipe details from top sources",
+        timestamp: new Date().toISOString(),
+      },
+      {
+        type: "analyze",
+        status: "pending",
+        message: "Analyzing and ranking recipes",
+        timestamp: new Date().toISOString(),
+      },
+      {
+        type: "synthesis",
+        status: "pending",
+        message: "Preparing your best 3 matches",
+        timestamp: new Date().toISOString(),
+      },
+    ];
+
+    streamPlan.forEach((item, index) => {
+      const timerId = window.setTimeout(() => {
+        setLiveActivity((previous) => [
+          ...previous,
+          {
+            ...item,
+            timestamp: new Date().toISOString(),
+          },
+        ]);
+      }, index * 1100);
+
+      activityTimersRef.current.push(timerId);
+    });
 
     try {
       const response = await findRecipes({
@@ -69,8 +128,20 @@ export function RecipeResearchPage() {
         userRequest: userRequest.trim(),
       });
 
+      clearActivityTimers();
+      setLiveActivity(response.activity);
       setResult(response);
     } catch {
+      clearActivityTimers();
+      setLiveActivity((previous) => [
+        ...previous,
+        {
+          type: "synthesis",
+          status: "error",
+          message: "Research failed before completion. Please try again.",
+          timestamp: new Date().toISOString(),
+        },
+      ]);
       setResult(null);
     }
   };
@@ -78,83 +149,113 @@ export function RecipeResearchPage() {
   return (
     <div className="min-h-screen bg-linear-to-b from-primary/5 via-background to-background px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl space-y-8">
-        <Card className="border-primary/20">
-          <CardHeader>
-            <CardTitle className="text-3xl">Recipe Research Agent</CardTitle>
-            <CardDescription>
-              Tell us what you want to cook and this agent will return 3 recipes
-              that best match your request and current fridge ingredients.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label>Fridge ingredients found</Label>
-              {fridgeNames.length > 0 ? (
-                <div className="rounded-lg border bg-muted/20 p-3">
-                  <div className="mb-2 text-xs text-muted-foreground">
-                    Using {fridgeNames.length} ingredient
-                    {fridgeNames.length === 1 ? "" : "s"} from your last scan
+        {!isLoading && !result && (
+          <Card className="border-primary/20">
+            <CardHeader>
+              <CardTitle className="text-3xl">Recipe Research Agent</CardTitle>
+              <CardDescription>
+                Tell us what you want to cook and this agent will return 3
+                recipes that best match your request and current fridge
+                ingredients.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label>Fridge ingredients found</Label>
+                {fridgeNames.length > 0 ? (
+                  <div className="rounded-lg border bg-muted/20 p-3">
+                    <div className="mb-2 text-xs text-muted-foreground">
+                      Using {fridgeNames.length} ingredient
+                      {fridgeNames.length === 1 ? "" : "s"} from your last scan
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {fridgeNames.map((name) => (
+                        <Badge key={name} variant="outline">
+                          {name}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {fridgeNames.map((name) => (
-                      <Badge key={name} variant="outline">
-                        {name}
-                      </Badge>
-                    ))}
+                ) : (
+                  <div className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
+                    No fridge scan data found. Scan your fridge first.
+                    <div className="mt-2">
+                      <Link href="/fridge" className="underline">
+                        Open Fridge Scanner
+                      </Link>
+                    </div>
                   </div>
+                )}
+              </div>
+
+              <form
+                className="space-y-4"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  void handleResearch();
+                }}
+              >
+                <div className="space-y-2">
+                  <Label htmlFor="user-request">
+                    What do you want to cook?
+                  </Label>
+                  <Input
+                    id="user-request"
+                    placeholder="Example: high-protein dinner under 30 minutes"
+                    value={userRequest}
+                    onChange={(event) => setUserRequest(event.target.value)}
+                  />
                 </div>
-              ) : (
-                <div className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
-                  No fridge scan data found. Scan your fridge first.
-                  <div className="mt-2">
-                    <Link href="/fridge" className="underline">
-                      Open Fridge Scanner
-                    </Link>
-                  </div>
+
+                <Button
+                  type="submit"
+                  disabled={!canSubmit || isLoading}
+                  className="w-full sm:w-auto"
+                >
+                  {isLoading ? "Researching recipes..." : "Find 3 Best Recipes"}
+                </Button>
+              </form>
+
+              {error && (
+                <div className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
+                  {error}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {!result && (liveActivity.length > 0 || isLoading) && (
+          <section className="rounded-3xl border border-border/60 bg-muted/35 p-5 shadow-[inset_1px_1px_0_rgba(255,255,255,0.65),inset_-1px_-1px_0_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.08)]">
+            <div className="mb-4">
+              <h2 className="text-xl font-semibold tracking-tight">
+                Research Activity Stream
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Live updates while the recipe agent researches the web.
+              </p>
+            </div>
+
+            <div className="space-y-2.5">
+              {liveActivity.map((item, index) => (
+                <div
+                  key={`${item.message}-${index}`}
+                  className="rounded-2xl border border-border/50 bg-background/70 px-3 py-2.5 text-sm shadow-[inset_1px_1px_0_rgba(255,255,255,0.6),inset_-1px_-1px_0_rgba(0,0,0,0.06)]"
+                >
+                  <p className="font-medium capitalize">
+                    {item.type} - {item.status}
+                  </p>
+                  <p className="text-muted-foreground">{item.message}</p>
+                </div>
+              ))}
+
+              {isLoading && (
+                <div className="rounded-2xl border border-border/50 bg-background/70 px-3 py-2.5 text-sm text-muted-foreground shadow-[inset_1px_1px_0_rgba(255,255,255,0.6),inset_-1px_-1px_0_rgba(0,0,0,0.06)]">
+                  Agent is still working...
                 </div>
               )}
             </div>
-
-            <form
-              className="space-y-4"
-              onSubmit={(event) => {
-                event.preventDefault();
-                void handleResearch();
-              }}
-            >
-              <div className="space-y-2">
-                <Label htmlFor="user-request">What do you want to cook?</Label>
-                <Input
-                  id="user-request"
-                  placeholder="Example: high-protein dinner under 30 minutes"
-                  value={userRequest}
-                  onChange={(event) => setUserRequest(event.target.value)}
-                />
-              </div>
-
-              <Button
-                type="submit"
-                disabled={!canSubmit || isLoading}
-                className="w-full sm:w-auto"
-              >
-                {isLoading ? "Researching recipes..." : "Find 3 Best Recipes"}
-              </Button>
-            </form>
-
-            {error && (
-              <div className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
-                {error}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {isLoading && (
-          <div className="grid gap-4 md:grid-cols-3">
-            <Skeleton className="h-56" />
-            <Skeleton className="h-56" />
-            <Skeleton className="h-56" />
-          </div>
+          </section>
         )}
 
         {result && (
@@ -216,26 +317,7 @@ export function RecipeResearchPage() {
               ))}
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Research Activity</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {result.activity.map((item, index) => (
-                    <div
-                      key={`${item.message}-${index}`}
-                      className="rounded-md border p-2 text-sm"
-                    >
-                      <p className="font-medium capitalize">
-                        {item.type} - {item.status}
-                      </p>
-                      <p className="text-muted-foreground">{item.message}</p>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-
+            <div>
               <Card>
                 <CardHeader>
                   <CardTitle>Sources</CardTitle>
