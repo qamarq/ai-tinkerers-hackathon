@@ -581,6 +581,33 @@ export function RecipeResearchPage() {
                     )}
                   </div>
                 ))}
+                {liveActivity.length === 4 && isLoading && (
+                  <div className="flex flex-col items-center justify-center py-6 gap-3">
+                    <div className="relative">
+                      <CookingPot
+                        className="h-12 w-12 text-primary animate-bounce"
+                        weight="fill"
+                      />
+                      <div className="absolute -top-1 left-1/2 -translate-x-1/2 flex gap-1">
+                        <div
+                          className="w-1 h-3 bg-muted-foreground/50 rounded-full animate-pulse"
+                          style={{ animationDelay: "0ms" }}
+                        />
+                        <div
+                          className="w-1 h-4 bg-muted-foreground/50 rounded-full animate-pulse"
+                          style={{ animationDelay: "150ms" }}
+                        />
+                        <div
+                          className="w-1 h-3 bg-muted-foreground/50 rounded-full animate-pulse"
+                          style={{ animationDelay: "300ms" }}
+                        />
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground animate-pulse">
+                      Cooking up your recipes...
+                    </p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
