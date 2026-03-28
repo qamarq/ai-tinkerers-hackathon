@@ -1,5 +1,5 @@
 {
-  "name": "ai-thinkerers-app",
+  "name": "gotownik",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -15,7 +15,8 @@
     "db:migrate": "drizzle-kit migrate",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "typegen": "next typegen"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.53",

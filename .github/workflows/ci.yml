@@ -15,21 +15,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_db
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -46,22 +31,23 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install
-
-      - name: Set up database environment
-        run: echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_db" >> $GITHUB_ENV
+        run: pnpm install --frozen-lockfile
 
       - name: Run Drizzle migrations
         run: pnpm db:migrate
 
-      - name: Build application
-        run: pnpm build
-
       - name: Check formatting
         run: pnpm format:check
+
+      - name: Generate types
+        run: pnpm typegen
 
       - name: Run type check
         run: pnpm lint:typecheck
 
       - name: Run ESLint
         run: pnpm lint:style
+
+      - name: Build application
+        run: pnpm build
+
