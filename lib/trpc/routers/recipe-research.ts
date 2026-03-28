@@ -88,7 +88,7 @@ const quickSearchOutputSchema = z.object({
           "Search must be at most 4 words",
         ),
     )
-    .length(3),
+    .length(4),
 });
 
 export type RecipeResearchResult = z.infer<typeof recipeResearchOutputSchema>;
