@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/router";
 import { Camera } from "@phosphor-icons/react";
 
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ import { FridgeResult } from "./FridgeResult";
 const FRIDGE_INVENTORY_STORAGE_KEY = "fridge:lastInventory";
 
 export const FridgePage: React.FC = () => {
+  const router = useRouter();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [parsedResult, setParsedResult] = useState<FridgeInventory | null>(
     null,
@@ -70,8 +71,8 @@ export const FridgePage: React.FC = () => {
           <CardHeader>
             <CardTitle className="text-3xl">Fridge Scanner</CardTitle>
             <CardDescription>
-              Take a photo of your fridge and we&apos;ll send it to an AI vision
-              agent via tRPC.
+              Take or upload a fridge photo, review detected items, then
+              continue.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-8">
@@ -88,8 +89,8 @@ export const FridgePage: React.FC = () => {
             {imagePreview && (
               <div className="rounded-lg border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
                 {isParsing
-                  ? "Running fridge analysis..."
-                  : "Analysis complete. You can retake the photo to scan again."}
+                  ? "Analyzing your fridge photo..."
+                  : "Analysis complete. You can review results below or retake the photo."}
               </div>
             )}
 
@@ -104,23 +105,33 @@ export const FridgePage: React.FC = () => {
               </div>
             )}
 
-            {parsedResult && !isParsing && (
-              <Link href="/recipe-research">
-                <Button className="w-full">
-                  Find Best Recipes From My Fridge
-                </Button>
-              </Link>
-            )}
-
-            {imagePreview && !isParsing && (
+            <div className="border-t pt-8 space-y-3">
+              <h2 className="text-lg font-semibold">3. Continue</h2>
+              <p className="text-sm text-muted-foreground">
+                Once you&apos;ve chosen a fridge photo, continue to the next
+                step.
+              </p>
               <Button
-                variant="outline"
                 className="w-full"
-                onClick={handleClearImage}
+                disabled={!imagePreview}
+                onClick={() => router.push("/")}
               >
-                <Camera className="mr-2 h-4 w-4" />
-                Scan Another Photo
+                Go To Next Page
               </Button>
+            </div>
+
+            {imagePreview && (
+              <div>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleClearImage}
+                  disabled={isParsing}
+                >
+                  <Camera className="mr-2 h-4 w-4" />
+                  Scan Another Photo
+                </Button>
+              </div>
             )}
           </CardContent>
         </Card>
