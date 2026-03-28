@@ -25,9 +25,13 @@ struct HomeView: View {
                         .fill(Color.gotownikPrimary.opacity(0.05))
                         .frame(width: 180, height: 180)
 
-                    Image(systemName: "scalemass")
-                        .font(.system(size: 56, weight: .thin))
-                        .foregroundStyle(Color.gotownikPrimary)
+                    if let nsImage = NSImage(named: "AppIcon") {
+                        Image(nsImage: nsImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 100, height: 100)
+                            .clipShape(RoundedRectangle(cornerRadius: 22))
+                    }
                 }
                 .scaleEffect(logoScale)
                 .opacity(logoOpacity)
