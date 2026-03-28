@@ -1,30 +1,26 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
-import { RegistrationFlow } from "@/features/auth";
-import type { AccountType } from "@/features/live-cooking/types/cooking";
 
 export default function RegisterPage() {
   const router = useRouter();
 
-  const handleRegistrationComplete = (data: { accountType: AccountType }) => {
-    console.log("Registration data:", data);
+  useEffect(() => {
     toast.success("Welcome to Gotownik!");
     router.push("/fridge");
-  };
-
-  const handleCancel = () => {
-    router.push("/");
-  };
+  }, [router]);
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-primary/5 to-background">
-      <RegistrationFlow
-        onComplete={handleRegistrationComplete}
-        onCancel={handleCancel}
-      />
+    <div className="min-h-screen bg-linear-to-b from-primary/5 to-background flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-pulse">
+          <p className="text-lg text-muted-foreground">
+            Setting up your account...
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
