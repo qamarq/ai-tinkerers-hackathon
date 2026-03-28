@@ -14,7 +14,7 @@ Following a recipe and need exactly 15g of butter? Measuring spices for a comple
 
 - **Instant ingredient weighing** -- place ingredients directly on your trackpad and get real-time gram readings
 - **Seamless cooking workflow** -- designed as a companion to our AI cooking guide, so measurements flow naturally into your recipe steps
-- **No extra hardware** -- your MacBook trackpad _is_ the scale
+- **No extra hardware** -- your MacBook trackpad *is* the scale
 - **Precision-calibrated** -- validated against professional digital scales for kitchen-grade accuracy
 - **Beautiful native UI** -- a clean, distraction-free SwiftUI interface that stays out of your way while you cook
 
@@ -44,7 +44,6 @@ Wagownik taps into the Force Touch pressure sensors built into every modern MacB
 4. Run the application (you may need to allow it in System Preferences > Security & Privacy)
 
 ### Option 2: Homebrew
-
 ```bash
 brew install --cask krishkrosh/apps/trackweight --force
 ```
@@ -58,7 +57,6 @@ brew install --cask krishkrosh/apps/trackweight --force
 ## Calibration
 
 Weight calculations have been rigorously validated:
-
 1. MacBook trackpad placed on a professional digital scale
 2. Known weights applied while maintaining finger contact
 3. Pressure readings compared and calibrated against reference measurements
@@ -69,7 +67,6 @@ The sensor data from MultitouchSupport maps directly to grams -- no conversion n
 ## Technical Details
 
 Built with:
-
 - **SwiftUI** for a polished, native user interface
 - **Combine** for reactive, real-time data flow
 - **Open Multi-Touch Support library** for direct trackpad sensor access
