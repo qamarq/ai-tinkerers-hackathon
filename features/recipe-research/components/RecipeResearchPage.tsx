@@ -14,6 +14,9 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
+import { Recipe3dSection } from "@/features/recipe-3d/components/recipe-3d-section";
 import type { FridgeInventory } from "@/lib/trpc/routers/fridge";
 import type { RecipeResearchResult } from "@/lib/trpc/routers/recipe-research";
 
@@ -312,6 +315,12 @@ export function RecipeResearchPage() {
                     >
                       Open source recipe
                     </a>
+
+                    <Recipe3dSection
+                      recipeName={recipe.title}
+                      summary={recipe.summary}
+                      ingredients={recipe.ingredients}
+                    />
                   </CardContent>
                 </Card>
               ))}
