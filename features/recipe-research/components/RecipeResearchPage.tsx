@@ -257,6 +257,8 @@ export function RecipeResearchPage() {
 
     reset();
     setResult(null);
+    setLiveActivity([]);
+    setCurrentStepIndex(0);
     clearActivityTimers();
 
     try {
