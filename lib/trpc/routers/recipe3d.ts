@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { db, eq } from "@/db";
+import { db, desc, eq } from "@/db";
 import { recipe3dTasksTable } from "@/db/schema/recipe3dTasks";
 import {
   createPreviewTask,
@@ -31,11 +31,12 @@ export const recipe3dRouter = createTRPCRouter({
         });
       }
 
-      // Check if a task already exists for this recipe
+      // Check if a task already exists for this recipe (most recent first)
       const existing = await db
         .select()
         .from(recipe3dTasksTable)
         .where(eq(recipe3dTasksTable.recipeName, input.recipeName))
+        .orderBy(desc(recipe3dTasksTable.createdAt))
         .limit(1);
 
       if (existing.length > 0) {
@@ -170,8 +171,18 @@ export const recipe3dRouter = createTRPCRouter({
         .select()
         .from(recipe3dTasksTable)
         .where(eq(recipe3dTasksTable.recipeName, input.recipeName))
+        .orderBy(desc(recipe3dTasksTable.createdAt))
         .limit(1);
 
-      return rows[0] ?? null;
+      const task = rows[0] ?? null;
+      if (task) {
+        console.log("[recipe3d.getByRecipeName] Found existing task:", {
+          recipeName: input.recipeName,
+          taskId: task.id,
+          status: task.status,
+          modelUrl: task.modelUrl,
+        });
+      }
+      return task;
     }),
 });
