@@ -48,6 +48,7 @@ export function useCookingSession({
 
   const ingredients = useAtomValue(ingredientsAtom);
   const steps = useAtomValue(stepsAtom);
+  const timer = useAtomValue(timerAtom);
   const setIngredients = useSetAtom(ingredientsAtom);
   const setSteps = useSetAtom(stepsAtom);
   const setTimer = useSetAtom(timerAtom);
@@ -70,13 +71,22 @@ export function useCookingSession({
           respond("ok");
           break;
         case "check_step":
-          setSteps((prev) =>
-            prev.map((step) =>
-              step.id === Number(args.step_id)
-                ? { ...step, checked: Boolean(args.checked) }
-                : step,
-            ),
-          );
+          setSteps((prev) => {
+            const stepId = Number(args.step_id);
+            const isChecked = Boolean(args.checked);
+
+            return prev.map((step) => {
+              // If marking step N as checked, mark all previous steps as checked too
+              if (isChecked && step.id < stepId) {
+                return { ...step, checked: true };
+              }
+              // Mark the target step
+              if (step.id === stepId) {
+                return { ...step, checked: isChecked };
+              }
+              return step;
+            });
+          });
           respond("ok");
           break;
         case "start_timer":
@@ -99,6 +109,17 @@ export function useCookingSession({
             isRunning: false,
           }));
           respond("ok");
+          break;
+        case "get_timer_status":
+          respond({
+            isActive: timer.totalSeconds > 0,
+            isRunning: timer.isRunning,
+            label: timer.label,
+            totalSeconds: timer.totalSeconds,
+            remainingSeconds: timer.remainingSeconds,
+            remainingMinutes: Math.floor(timer.remainingSeconds / 60),
+            remainingSecondsDisplay: timer.remainingSeconds % 60,
+          });
           break;
         case "end_session":
           respond("Session ended successfully");
@@ -137,7 +158,7 @@ export function useCookingSession({
           respond("unknown tool");
       }
     },
-    [setIngredients, setSteps, setTimer, onSessionEnd],
+    [setIngredients, setSteps, setTimer, timer, onSessionEnd],
   );
 
   const captureVideoFrame = useCallback(async (): Promise<string | null> => {
