@@ -1,10 +1,12 @@
 import { TRPCError } from "@trpc/server";
+import { generateText } from "ai";
 import { z } from "zod";
 
 import {
   runRecipeQuickSearchAgent,
   runRecipeResearchAgent,
 } from "@/features/recipe-research/server/recipeResearchAgent";
+import { gemini } from "@/lib/ai";
 
 import { createTRPCRouter, publicProcedure } from "../server";
 
@@ -91,8 +93,39 @@ const quickSearchOutputSchema = z.object({
     .length(4),
 });
 
+const transformRecipeInputSchema = z.object({
+  title: z.string(),
+  summary: z.string(),
+  ingredients: z.array(z.string()),
+  estimatedTimeMinutes: z.number().int().positive().optional(),
+  sourceUrl: z.string().url(),
+});
+
+const transformRecipeOutputSchema = z.object({
+  title: z.string(),
+  ingredients: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      amount: z.string(),
+      checked: z.boolean(),
+    }),
+  ),
+  steps: z.array(
+    z.object({
+      id: z.number(),
+      text: z.string(),
+      checked: z.boolean(),
+      ingredientIds: z.array(z.string()).optional(),
+    }),
+  ),
+  estimatedTimeMinutes: z.number().int().positive().optional(),
+  sourceUrl: z.string().url(),
+});
+
 export type RecipeResearchResult = z.infer<typeof recipeResearchOutputSchema>;
 export type RecipeQuickSearchResult = z.infer<typeof quickSearchOutputSchema>;
+export type TransformedRecipe = z.infer<typeof transformRecipeOutputSchema>;
 
 export const recipeResearchRouter = createTRPCRouter({
   suggestQuickSearches: publicProcedure
@@ -147,5 +180,129 @@ export const recipeResearchRouter = createTRPCRouter({
           userRequest: input.userRequest,
         },
       };
+    }),
+  transformRecipe: publicProcedure
+    .input(transformRecipeInputSchema)
+    .output(transformRecipeOutputSchema)
+    .mutation(async ({ input }) => {
+      if (!process.env.GEMINI_API_KEY) {
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "GEMINI_API_KEY is missing on the server.",
+        });
+      }
+
+      // Transform ingredients with IDs
+      const ingredients = input.ingredients.map((ing, index) => ({
+        id: (index + 1).toString(),
+        name: ing,
+        amount: "as needed",
+        checked: false,
+      }));
+
+      // Create ingredient mapping for AI
+      const ingredientList = ingredients
+        .map((ing) => `ID ${ing.id}: ${ing.name}`)
+        .join("\n");
+
+      // Generate cooking steps using AI
+      const prompt = `You are a professional chef. Generate detailed cooking steps for this recipe.
+
+Recipe Title: ${input.title}
+Summary: ${input.summary}
+Estimated Time: ${input.estimatedTimeMinutes || "30-45"} minutes
+
+Ingredients (with IDs):
+${ingredientList}
+
+Generate 5-8 clear, actionable cooking steps. For each step:
+1. Write clear instructions (1-2 sentences max)
+2. Reference ingredient IDs when ingredients are used (e.g., ["1", "2"])
+3. Estimate how many minutes this step takes (optional)
+
+Important:
+- Steps should be in logical cooking order
+- Be specific about techniques (chop, dice, sauté, etc.)
+- Include temperatures and timings where relevant
+- Mention when to use specific ingredients
+- Keep instructions concise and clear
+
+Return ONLY a JSON object with this exact structure:
+{
+  "steps": [
+    {
+      "text": "Step instruction here",
+      "ingredientIds": ["1", "2"],
+      "estimatedMinutes": 5
+    }
+  ]
+}`;
+
+      try {
+        const { text } = await generateText({
+          model: gemini,
+          prompt,
+          temperature: 0.3,
+        });
+
+        // Parse AI response
+        const stepsSchema = z.object({
+          steps: z.array(
+            z.object({
+              text: z.string(),
+              ingredientIds: z.array(z.string()).optional(),
+              estimatedMinutes: z.number().optional(),
+            }),
+          ),
+        });
+
+        const parsed = stepsSchema.parse(JSON.parse(text));
+
+        // Transform to CookingStep format
+        const steps = parsed.steps.map((step, index) => ({
+          id: index + 1,
+          text: step.text,
+          checked: false,
+          ingredientIds: step.ingredientIds,
+        }));
+
+        return {
+          title: input.title,
+          ingredients,
+          steps,
+          estimatedTimeMinutes: input.estimatedTimeMinutes,
+          sourceUrl: input.sourceUrl,
+        };
+      } catch (error) {
+        console.error("Failed to generate cooking steps:", error);
+
+        // Fallback: basic steps
+        const steps = [
+          {
+            id: 1,
+            text: "Prepare all ingredients and equipment",
+            checked: false,
+            ingredientIds: ingredients.map((i) => i.id),
+          },
+          {
+            id: 2,
+            text: "Follow the cooking instructions from the recipe source",
+            checked: false,
+          },
+          {
+            id: 3,
+            text: "Complete the dish and serve",
+            checked: false,
+          },
+        ];
+
+        return {
+          title: input.title,
+          ingredients,
+          steps,
+          estimatedTimeMinutes: input.estimatedTimeMinutes,
+          sourceUrl: input.sourceUrl,
+        };
+      }
     }),
 });

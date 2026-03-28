@@ -39,6 +39,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { saveRecipeForCooking } from "@/features/cooking/utils/recipeTransformer";
 import { Recipe3dSection } from "@/features/recipe-3d/components/recipe-3d-section";
 import type { FridgeInventory } from "@/lib/trpc/routers/fridge";
 import type { RecipeResearchResult } from "@/lib/trpc/routers/recipe-research";
@@ -54,6 +55,9 @@ export function RecipeResearchPage() {
   const [userRequest, setUserRequest] = useState("");
   const [result, setResult] = useState<RecipeResearchResult | null>(null);
   const [quickSearches, setQuickSearches] = useState<string[]>([]);
+  const [transformingRecipeId, setTransformingRecipeId] = useState<
+    string | null
+  >(null);
   const [liveActivity, setLiveActivity] = useState<
     RecipeResearchResult["activity"]
   >([]);
@@ -66,6 +70,7 @@ export function RecipeResearchPage() {
   const {
     findRecipes,
     suggestQuickSearches,
+    transformRecipe,
     isSuggestingQuickSearches,
     isLoading,
     error,
@@ -287,6 +292,28 @@ export function RecipeResearchPage() {
     return Math.round(
       (recipe.availableIngredients.length / recipe.ingredients.length) * 100,
     );
+  };
+
+  const handleStartCooking = async (
+    recipe: RecipeResearchResult["recipes"][number],
+  ) => {
+    const recipeId = `${recipe.title}-${recipe.sourceUrl}`;
+    setTransformingRecipeId(recipeId);
+
+    try {
+      const transformed = await transformRecipe({
+        title: recipe.title,
+        summary: recipe.summary,
+        ingredients: recipe.ingredients,
+        estimatedTimeMinutes: recipe.estimatedTimeMinutes,
+        sourceUrl: recipe.sourceUrl,
+      });
+      saveRecipeForCooking(transformed);
+      router.push("/cooking");
+    } catch (error) {
+      console.error("Failed to transform recipe:", error);
+      setTransformingRecipeId(null);
+    }
   };
 
   return (
@@ -736,15 +763,29 @@ export function RecipeResearchPage() {
 
                         <div className="flex flex-col gap-2">
                           <Button
-                            onClick={() => router.push("/cooking")}
+                            onClick={() => void handleStartCooking(recipe)}
+                            disabled={
+                              transformingRecipeId ===
+                              `${recipe.title}-${recipe.sourceUrl}`
+                            }
                             className={`w-full gap-2 ${
                               isTopResult
                                 ? ""
                                 : "bg-muted hover:bg-muted/80 text-foreground"
                             }`}
                           >
-                            <Flame className="h-4 w-4" />
-                            Start Cooking
+                            {transformingRecipeId ===
+                            `${recipe.title}-${recipe.sourceUrl}` ? (
+                              <>
+                                <Sparkles className="h-4 w-4 animate-pulse" />
+                                Preparing...
+                              </>
+                            ) : (
+                              <>
+                                <Flame className="h-4 w-4" />
+                                Start Cooking
+                              </>
+                            )}
                           </Button>
                           <a
                             href={recipe.sourceUrl}

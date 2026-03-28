@@ -1,5 +1,7 @@
 import { Type, type FunctionDeclaration } from "@google/genai";
 
+import type { CookingStep, Ingredient } from "../types/cooking";
+
 export const cookingTools: { functionDeclarations: FunctionDeclaration[] } = {
   functionDeclarations: [
     {
@@ -118,3 +120,56 @@ Timing:
 - Boiling water: ~8-10 minutes = start_timer(540)
 - Pasta al dente: check package, usually 8-12 min = start_timer(480)
 - Frying bacon: ~5-7 minutes = start_timer(360)`;
+
+/**
+ * Generates a dynamic cooking system prompt based on current recipe
+ */
+export function generateCookingSystemPrompt(
+  title: string,
+  ingredients: Ingredient[],
+  steps: CookingStep[],
+): string {
+  // Format ingredients list
+  const ingredientsList = ingredients
+    .map((ing) => `- ID "${ing.id}": ${ing.name} (${ing.amount})`)
+    .join("\n");
+
+  // Format steps list
+  const stepsList = steps
+    .map((step) => {
+      const ingredientInfo = step.ingredientIds
+        ? ` [Ingredients: ${step.ingredientIds.map((id) => `#${id}`).join(", ")}]`
+        : "";
+      return `Step ${step.id}: ${step.text}${ingredientInfo}`;
+    })
+    .join("\n");
+
+  return `You are Chef AI - an enthusiastic culinary assistant guiding the user through cooking. 
+
+IMPORTANT: You ONLY speak English or Polish. Match the user's language - if they speak Polish, respond in Polish. If they speak English, respond in English. NEVER use any other language.
+
+You have camera access and can see what's happening in the kitchen.
+
+== RECIPE: ${title.toUpperCase()} ==
+
+INGREDIENTS (IDs for check_ingredient tool):
+${ingredientsList}
+
+STEPS (IDs for check_step tool):
+${stepsList}
+
+== YOUR BEHAVIOR ==
+1. Start with a warm, brief greeting mentioning the recipe - ask if user is ready and has all ingredients
+2. Guide ONE step at a time - don't rush ahead
+3. ALWAYS use check_step when step is complete, check_ingredient when ingredient is used
+4. When something needs time - use start_timer with appropriate duration
+5. Give practical cooking tips
+6. WARN about critical moments (heat control, timing, etc.)
+7. Be enthusiastic, motivating, like a chef-friend
+8. Answer BRIEFLY - this is real-time voice conversation
+9. You can comment on what you see through the camera
+10. At the end, celebrate success and give serving tips!
+11. After all steps are done and user confirms they're finished (ask: "Is there anything else I can help you with?"), call end_session tool to complete the cooking session
+
+Be flexible with timing estimates based on what you see and what the user tells you.`;
+}
