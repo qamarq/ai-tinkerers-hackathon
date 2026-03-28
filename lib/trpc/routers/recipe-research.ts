@@ -265,7 +265,7 @@ export const recipeResearchRouter = createTRPCRouter({
         const steps = [
           {
             id: 1,
-            text: `Add ${yogurtAmount} Greek yogurt and ${milkAmount} milk to a jar or bowl, then whisk thoroughly for about 20-30 seconds until the mixture is smooth, creamy, and fully combined with no visible streaks.`,
+            text: `Add ${yogurtAmount} Greek yogurt and ${milkAmount} milk to a jar, then whisk until smooth.`,
             checked: false,
             ingredientIds: [yogurtId, milkId].filter((id): id is string =>
               Boolean(id),
@@ -273,19 +273,19 @@ export const recipeResearchRouter = createTRPCRouter({
           },
           {
             id: 2,
-            text: `Stir in ${chiaAmount} chia seeds gradually while whisking, and keep mixing for another 20-30 seconds so the seeds are evenly distributed and do not clump together at the bottom or along the sides.`,
+            text: `Stir in ${chiaAmount} chia seeds and mix well so the seeds are evenly distributed.`,
             checked: false,
             ingredientIds: [chiaId].filter((id): id is string => Boolean(id)),
           },
           {
             id: 3,
-            text: "Let the mixture rest for 10 minutes so the chia seeds can start absorbing liquid, then stir again to break up any settling before covering and refrigerating for at least 2 hours, or overnight, until thick and spoonable.",
+            text: "Rest for 10 minutes, stir once more, then cover and refrigerate until thickened.",
             checked: false,
             ingredientIds: [chiaId].filter((id): id is string => Boolean(id)),
           },
           {
             id: 4,
-            text: `When ready to eat, give the pudding a quick stir to loosen the texture, then top with ${raspberriesAmount} raspberries and serve immediately, adding extra fruit or crunch if you want more texture.`,
+            text: `Top with ${raspberriesAmount} raspberries before serving.`,
             checked: false,
             ingredientIds: [raspberriesId].filter((id): id is string =>
               Boolean(id),
