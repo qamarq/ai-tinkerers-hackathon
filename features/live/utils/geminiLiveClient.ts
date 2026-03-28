@@ -7,24 +7,35 @@ import {
   Modality,
   StartSensitivity,
   Type,
+  type FunctionDeclaration,
+  type LiveServerMessage,
+  type LiveServerToolCall,
   type Session,
 } from "@google/genai";
+
+export type ToolCallRespond = (result: unknown) => void;
 
 export interface GeminiLiveConfig {
   model: string;
   apiKey: string;
   systemInstruction?: string;
   voiceName?: string;
+  tools?: { functionDeclarations: FunctionDeclaration[] }[];
   onAudioData: (base64Audio: string) => void;
   onInputTranscription: (text: string, isPartial: boolean) => void;
   onOutputTranscription: (text: string, isPartial: boolean) => void;
   onInterrupted?: () => void;
+  onToolCall?: (
+    name: string,
+    args: Record<string, unknown>,
+    respond: ToolCallRespond,
+  ) => void;
   onError: (error: Error) => void;
   onConnected: () => void;
   onDisconnected: () => void;
 }
 
-// Example tool: Get current time
+// Default tool: Get current time
 const getTimeTool = {
   functionDeclarations: [
     {
@@ -60,14 +71,12 @@ export class GeminiLiveClient {
             {
               text:
                 this.config.systemInstruction ||
-                "Jesteś pomocnym asystentem AI. Odpowiadaj naturalnie i krótko po polsku. Widzisz użytkownika przez kamerę i możesz komentować to co widzisz. Możesz używać narzędzi gdy potrzebujesz dodatkowych informacji.",
+                "You are a helpful AI assistant. Respond naturally and briefly in English OR Polish - match the user's language. You can see the user through the camera. IMPORTANT: ONLY use English or Polish, NO other languages.",
             },
           ],
         },
-        // Enable audio transcriptions
         inputAudioTranscription: {},
         outputAudioTranscription: {},
-        // Configure voice
         speechConfig: {
           voiceConfig: {
             prebuiltVoiceConfig: {
@@ -75,7 +84,6 @@ export class GeminiLiveClient {
             },
           },
         },
-        // Configure VAD for better interruption handling
         realtimeInputConfig: {
           automaticActivityDetection: {
             disabled: false,
@@ -85,8 +93,7 @@ export class GeminiLiveClient {
             silenceDurationMs: 800,
           },
         },
-        // Add example tools
-        tools: [getTimeTool],
+        tools: this.config.tools ?? [getTimeTool],
       };
 
       this.session = await this.ai.live.connect({
@@ -98,13 +105,8 @@ export class GeminiLiveClient {
             this.isConnected = true;
             this.config.onConnected();
           },
-          onmessage: (message: {
-            serverContent?: any;
-            text?: string;
-            data?: any;
-            usageMetadata?: any;
-          }) => {
-            this.handleServerMessage(message);
+          onmessage: (message) => {
+            this.handleServerMessage(message as LiveServerMessage);
           },
           onerror: (e: ErrorEvent) => {
             console.error("Live API Error:", e.message);
@@ -123,24 +125,21 @@ export class GeminiLiveClient {
     }
   }
 
-  private handleServerMessage(message: {
-    serverContent?: any;
-    text?: string;
-    data?: any;
-  }) {
-    const content = message.serverContent;
+  private handleServerMessage(message: LiveServerMessage) {
+    // Tool calls live at the message level, not inside serverContent
+    if (message.toolCall) {
+      this.handleToolCall(message.toolCall);
+    }
 
+    const content = message.serverContent;
     if (!content) return;
 
-    // Handle interruption
     if (content.interrupted) {
-      console.log("Generation was interrupted");
       this.inputTranscriptBuffer = "";
       this.outputTranscriptBuffer = "";
       this.config.onInterrupted?.();
     }
 
-    // Handle audio response
     if (content.modelTurn?.parts) {
       for (const part of content.modelTurn.parts) {
         if (part.inlineData?.data) {
@@ -151,106 +150,72 @@ export class GeminiLiveClient {
 
     const isTurnComplete = content.turnComplete === true;
 
-    // Handle input transcription (what user said)
     if (content.inputTranscription?.text) {
       this.inputTranscriptBuffer += content.inputTranscription.text;
       this.config.onInputTranscription(
         this.inputTranscriptBuffer,
         !isTurnComplete,
       );
-
-      if (isTurnComplete) {
-        this.inputTranscriptBuffer = "";
-      }
+      if (isTurnComplete) this.inputTranscriptBuffer = "";
     }
 
-    // Handle output transcription (what AI said)
     if (content.outputTranscription?.text) {
       this.outputTranscriptBuffer += content.outputTranscription.text;
       this.config.onOutputTranscription(
         this.outputTranscriptBuffer,
         !isTurnComplete,
       );
-
-      if (isTurnComplete) {
-        this.outputTranscriptBuffer = "";
-      }
-    }
-
-    // Handle tool calls
-    if (content.toolCall) {
-      console.log("Tool call received:", content.toolCall);
-      this.handleToolCall(content.toolCall);
+      if (isTurnComplete) this.outputTranscriptBuffer = "";
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private handleToolCall(toolCall: any) {
-    // Handle get_current_time tool
-    if (toolCall.functionCalls) {
-      for (const call of toolCall.functionCalls) {
-        if (call.name === "get_current_time") {
-          const currentTime = new Date().toLocaleString("pl-PL", {
-            timeZone: "Europe/Warsaw",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-          });
+  private handleToolCall(toolCall: LiveServerToolCall) {
+    if (!toolCall.functionCalls) return;
 
-          // Send tool response back
-          this.session?.sendToolResponse({
-            functionResponses: [
-              {
-                id: call.id,
-                name: call.name,
-                response: {
-                  result: `Aktualny czas: ${currentTime}`,
-                },
-              },
-            ],
-          });
-        }
+    for (const call of toolCall.functionCalls) {
+      const respond: ToolCallRespond = (result) => {
+        this.session?.sendToolResponse({
+          functionResponses: [
+            {
+              id: call.id ?? "",
+              name: call.name ?? "",
+              response: { result: String(result) },
+            },
+          ],
+        });
+      };
+
+      if (call.name === "get_current_time") {
+        const currentTime = new Date().toLocaleString("pl-PL", {
+          timeZone: "Europe/Warsaw",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+        respond(`Aktualny czas: ${currentTime}`);
+      } else {
+        this.config.onToolCall?.(call.name ?? "", call.args ?? {}, respond);
       }
     }
   }
 
   sendAudio(audioData: string) {
-    if (!this.isConnected || !this.session) {
-      console.warn("Session not connected");
-      return;
-    }
-
+    if (!this.isConnected || !this.session) return;
     this.session.sendRealtimeInput({
-      audio: {
-        data: audioData,
-        mimeType: "audio/pcm;rate=16000",
-      },
+      audio: { data: audioData, mimeType: "audio/pcm;rate=16000" },
     });
   }
 
   sendVideo(videoData: string) {
-    if (!this.isConnected || !this.session) {
-      console.warn("Session not connected");
-      return;
-    }
-
+    if (!this.isConnected || !this.session) return;
     this.session.sendRealtimeInput({
-      video: {
-        data: videoData,
-        mimeType: "image/jpeg",
-      },
+      video: { data: videoData, mimeType: "image/jpeg" },
     });
   }
 
   sendText(text: string) {
-    if (!this.isConnected || !this.session) {
-      console.warn("Session not connected");
-      return;
-    }
-
-    this.session.sendRealtimeInput({
-      text: text,
-    });
+    if (!this.isConnected || !this.session) return;
+    this.session.sendRealtimeInput({ text });
   }
 
   disconnect() {
