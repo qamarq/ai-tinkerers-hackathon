@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { ArrowRight, ChefHat, Play, Settings, Users } from "lucide-react";
+import {
+  ArrowRight,
+  ChefHat,
+  Download,
+  Play,
+  Settings,
+  Users,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
