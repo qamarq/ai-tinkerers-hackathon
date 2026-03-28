@@ -210,7 +210,7 @@ export const FridgeCapture: React.FC<FridgeCaptureProps> = ({
           </p>
         </div>
       ) : (
-        <div className="flex gap-4 flex-wrap justify-center">
+        <div className="flex gap-3 flex-wrap justify-center">
           <Button
             disabled={disabled}
             onClick={handleOpenCamera}
