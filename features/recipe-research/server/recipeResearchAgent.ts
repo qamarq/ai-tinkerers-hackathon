@@ -178,9 +178,13 @@ Constraints:
     });
 
     return {
-      searches: output.searches.map((search) =>
-        search.trim().split(/\s+/).slice(0, 4).join(" "),
-      ),
+      searches: [
+        "quick breakfast",
+        ...output.searches
+          .map((search) => search.trim().split(/\s+/).slice(0, 4).join(" "))
+          .filter(Boolean)
+          .slice(0, 3),
+      ],
     };
   } catch {
     throw new Error("Failed to generate quick searches.");
