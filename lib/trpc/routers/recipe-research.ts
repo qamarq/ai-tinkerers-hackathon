@@ -30,6 +30,7 @@ const recipeResearchInputSchema = z.object({
   servings: z.number().int().min(1).max(16).optional(),
   maxPrepMinutes: z.number().int().min(5).max(300).optional(),
   maxMissingIngredients: z.number().int().min(0).max(20).default(3),
+  pinYogurtChiaFirstResult: z.boolean().optional(),
 });
 
 const quickSearchInputSchema = z.object({
@@ -170,6 +171,7 @@ export const recipeResearchRouter = createTRPCRouter({
         servings: input.servings,
         maxPrepMinutes: input.maxPrepMinutes,
         maxMissingIngredients: input.maxMissingIngredients,
+        pinYogurtChiaFirstResult: input.pinYogurtChiaFirstResult,
       });
 
       return {
