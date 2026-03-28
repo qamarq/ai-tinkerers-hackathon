@@ -1,69 +1,114 @@
-import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, ChefHat, Play, Settings, Users } from "lucide-react";
 
-import { VapiExample } from "../components/vapi/VapiExample";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-linear-to-b from-primary/5 to-background">
+      <header className="border-b">
+        <div className="container mx-auto flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-2">
+            <ChefHat className="h-6 w-6 text-primary" />
+            <span className="text-xl font-bold">Live Cooking</span>
+          </div>
+          <nav className="flex items-center gap-4">
+            <Link href="/live-cooking">
+              <Button variant="ghost">Sign In</Button>
+            </Link>
+            <Link href="/register">
+              <Button>Get Started</Button>
+            </Link>
+          </nav>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </header>
+
+      <main className="container mx-auto px-4 py-24">
+        <div className="mx-auto max-w-3xl text-center space-y-8">
+          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
+            Automate Your <span className="text-primary">Cooking Process</span>
+          </h1>
+          <p className="text-xl text-muted-foreground">
+            Transform your kitchen with AI-powered cooking automation.
+            Step-by-step guidance, precise timing, and perfect results every
+            time.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/register">
+              <Button size="lg" className="w-full sm:w-auto">
+                Start Cooking
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+            <Link href="/live-cooking">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto">
+                View Demo
+              </Button>
+            </Link>
+          </div>
         </div>
 
-        <VapiExample />
+        <div className="mt-24 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <Card>
+            <CardHeader>
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
+                <Play className="h-6 w-6 text-primary" />
+              </div>
+              <CardTitle>Step-by-Step Guidance</CardTitle>
+              <CardDescription>
+                Follow precise cooking instructions with automated timing and
+                temperature control.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
+                <Settings className="h-6 w-6 text-primary" />
+              </div>
+              <CardTitle>Smart Automation</CardTitle>
+              <CardDescription>
+                Connect your kitchen devices and let AI optimize your cooking
+                process.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
+                <Users className="h-6 w-6 text-primary" />
+              </div>
+              <CardTitle>Recipe Management</CardTitle>
+              <CardDescription>
+                Organize your recipes, track cooking history, and discover new
+                dishes.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </div>
       </main>
+
+      <footer className="border-t mt-24">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-2">
+              <ChefHat className="h-5 w-5 text-primary" />
+              <span className="font-semibold">Live Cooking</span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Built for the AI Tinkerers Hackathon
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

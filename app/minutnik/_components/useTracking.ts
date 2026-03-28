@@ -16,7 +16,12 @@ interface TrackedPoint {
 }
 
 interface TrackingCallbacks {
-  onPositionUpdate: (timerId: string, x: number, y: number, isLost: boolean) => void;
+  onPositionUpdate: (
+    timerId: string,
+    x: number,
+    y: number,
+    isLost: boolean,
+  ) => void;
 }
 
 const TRACK_WIDTH = 320;
@@ -29,7 +34,7 @@ const POINT_RADIUS = 30; // radius in tracking pixels
 export function useTracking(
   videoRef: React.RefObject<HTMLVideoElement | null>,
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
-  callbacks: TrackingCallbacks
+  callbacks: TrackingCallbacks,
 ) {
   const trackedPointsRef = useRef<TrackedPoint[]>([]);
   const prevGrayRef = useRef<any>(null);
@@ -45,14 +50,30 @@ export function useTracking(
   const initJsfeat = useCallback(() => {
     if (initializedRef.current || !jsfeat) return;
 
-    prevGrayRef.current = new jsfeat.matrix_t(TRACK_WIDTH, TRACK_HEIGHT, jsfeat.U8_t | jsfeat.C1_t);
-    currGrayRef.current = new jsfeat.matrix_t(TRACK_WIDTH, TRACK_HEIGHT, jsfeat.U8_t | jsfeat.C1_t);
+    prevGrayRef.current = new jsfeat.matrix_t(
+      TRACK_WIDTH,
+      TRACK_HEIGHT,
+      jsfeat.U8_t | jsfeat.C1_t,
+    );
+    currGrayRef.current = new jsfeat.matrix_t(
+      TRACK_WIDTH,
+      TRACK_HEIGHT,
+      jsfeat.U8_t | jsfeat.C1_t,
+    );
 
     prevPyrRef.current = new jsfeat.pyramid_t(3);
-    prevPyrRef.current.allocate(TRACK_WIDTH, TRACK_HEIGHT, jsfeat.U8_t | jsfeat.C1_t);
+    prevPyrRef.current.allocate(
+      TRACK_WIDTH,
+      TRACK_HEIGHT,
+      jsfeat.U8_t | jsfeat.C1_t,
+    );
 
     currPyrRef.current = new jsfeat.pyramid_t(3);
-    currPyrRef.current.allocate(TRACK_WIDTH, TRACK_HEIGHT, jsfeat.U8_t | jsfeat.C1_t);
+    currPyrRef.current.allocate(
+      TRACK_WIDTH,
+      TRACK_HEIGHT,
+      jsfeat.U8_t | jsfeat.C1_t,
+    );
 
     initializedRef.current = true;
   }, []);
@@ -71,12 +92,8 @@ export function useTracking(
       const points: [number, number][] = [];
       for (let gy = 0; gy < POINT_GRID_SIZE; gy++) {
         for (let gx = 0; gx < POINT_GRID_SIZE; gx++) {
-          const px =
-            cx +
-            ((gx / (POINT_GRID_SIZE - 1)) * 2 - 1) * POINT_RADIUS;
-          const py =
-            cy +
-            ((gy / (POINT_GRID_SIZE - 1)) * 2 - 1) * POINT_RADIUS;
+          const px = cx + ((gx / (POINT_GRID_SIZE - 1)) * 2 - 1) * POINT_RADIUS;
+          const py = cy + ((gy / (POINT_GRID_SIZE - 1)) * 2 - 1) * POINT_RADIUS;
           // Clamp to image bounds
           if (px >= 0 && px < TRACK_WIDTH && py >= 0 && py < TRACK_HEIGHT) {
             points.push([px, py]);
@@ -103,13 +120,13 @@ export function useTracking(
         status: new Uint8Array(count),
       });
     },
-    [initJsfeat]
+    [initJsfeat],
   );
 
   // Remove tracking for a timer
   const removeTrackedPoint = useCallback((timerId: string) => {
     trackedPointsRef.current = trackedPointsRef.current.filter(
-      (tp) => tp.timerId !== timerId
+      (tp) => tp.timerId !== timerId,
     );
   }, []);
 
@@ -141,7 +158,13 @@ export function useTracking(
 
       const video = videoRef.current;
       const canvas = canvasRef.current;
-      if (!video || !canvas || video.readyState < 2 || !jsfeat || !initializedRef.current) {
+      if (
+        !video ||
+        !canvas ||
+        video.readyState < 2 ||
+        !jsfeat ||
+        !initializedRef.current
+      ) {
         loop();
         return;
       }
@@ -169,13 +192,21 @@ export function useTracking(
       currPyrRef.current = tempPyr;
 
       // Convert to grayscale
-      jsfeat.imgproc.grayscale(imageData.data, TRACK_WIDTH, TRACK_HEIGHT, currGrayRef.current);
+      jsfeat.imgproc.grayscale(
+        imageData.data,
+        TRACK_WIDTH,
+        TRACK_HEIGHT,
+        currGrayRef.current,
+      );
 
       // Build pyramid
       currPyrRef.current.data[0] = currGrayRef.current;
       // Build lower levels
       for (let i = 1; i < currPyrRef.current.levels; i++) {
-        jsfeat.imgproc.pyrdown(currPyrRef.current.data[i - 1], currPyrRef.current.data[i]);
+        jsfeat.imgproc.pyrdown(
+          currPyrRef.current.data[i - 1],
+          currPyrRef.current.data[i],
+        );
       }
 
       // Track each set of points
@@ -199,7 +230,7 @@ export function useTracking(
           MAX_ITERATIONS,
           tp.status,
           0.01,
-          0.0001
+          0.0001,
         );
 
         // Compute centroid of surviving points
@@ -225,7 +256,12 @@ export function useTracking(
           const xPercent = (centroidX / TRACK_WIDTH) * 100;
           const yPercent = (centroidY / TRACK_HEIGHT) * 100;
 
-          callbacksRef.current.onPositionUpdate(tp.timerId, xPercent, yPercent, false);
+          callbacksRef.current.onPositionUpdate(
+            tp.timerId,
+            xPercent,
+            yPercent,
+            false,
+          );
         } else {
           callbacksRef.current.onPositionUpdate(tp.timerId, -1, -1, true);
         }
