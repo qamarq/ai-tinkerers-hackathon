@@ -13,6 +13,8 @@ interface FridgeCaptureProps {
   disabled?: boolean;
 }
 
+type CameraSourceSelection = `device:${string}`;
+
 export const FridgeCapture: React.FC<FridgeCaptureProps> = ({
   onImageCapture,
   imagePreview,
@@ -21,11 +23,18 @@ export const FridgeCapture: React.FC<FridgeCaptureProps> = ({
 }) => {
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const [isStartingCamera, setIsStartingCamera] = useState(false);
+  const [cameraSource, setCameraSource] = useState<CameraSourceSelection | "">(
+    "",
+  );
+  const [cameraDevices, setCameraDevices] = useState<MediaDeviceInfo[]>([]);
+  const [isLoadingDevices, setIsLoadingDevices] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
+  const previousCameraSourceRef = useRef<CameraSourceSelection | "">("");
 
   const stopCamera = useCallback(() => {
     streamRef.current?.getTracks().forEach((track) => {
@@ -34,8 +43,29 @@ export const FridgeCapture: React.FC<FridgeCaptureProps> = ({
 
     streamRef.current = null;
     if (videoRef.current) {
+      videoRef.current.pause();
       videoRef.current.srcObject = null;
     }
+  }, []);
+
+  const loadCameraDevices = useCallback(async () => {
+    if (!navigator.mediaDevices?.enumerateDevices) {
+      return;
+    }
+
+    try {
+      setIsLoadingDevices(true);
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      setCameraDevices(
+        devices.filter((device) => device.kind === "videoinput"),
+      );
+    } finally {
+      setIsLoadingDevices(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    setIsMounted(true);
   }, []);
 
   useEffect(() => {
@@ -45,12 +75,42 @@ export const FridgeCapture: React.FC<FridgeCaptureProps> = ({
   }, [stopCamera]);
 
   useEffect(() => {
+    void loadCameraDevices();
+  }, [loadCameraDevices]);
+
+  useEffect(() => {
+    if (!navigator.mediaDevices?.addEventListener) {
+      return;
+    }
+
+    const handleDeviceChange = () => {
+      void loadCameraDevices();
+    };
+
+    navigator.mediaDevices.addEventListener("devicechange", handleDeviceChange);
+    return () => {
+      navigator.mediaDevices.removeEventListener(
+        "devicechange",
+        handleDeviceChange,
+      );
+    };
+  }, [loadCameraDevices]);
+
+  useEffect(() => {
     if (!cameraOpen || !videoRef.current || !streamRef.current) {
       return;
     }
 
-    videoRef.current.srcObject = streamRef.current;
-    void videoRef.current.play();
+    const videoElement = videoRef.current;
+    videoElement.srcObject = streamRef.current;
+
+    void videoElement.play().catch((error: unknown) => {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
+
+      setCameraError("Unable to start camera preview. Please try again.");
+    });
   }, [cameraOpen]);
 
   useEffect(() => {
@@ -61,6 +121,53 @@ export const FridgeCapture: React.FC<FridgeCaptureProps> = ({
     setCameraOpen(false);
     stopCamera();
   }, [cameraOpen, disabled, stopCamera]);
+
+  useEffect(() => {
+    if (!isMounted) {
+      return;
+    }
+
+    if (cameraDevices.length === 0) {
+      setCameraSource("");
+      return;
+    }
+
+    const preferredDevice =
+      cameraDevices.find((device) =>
+        device.label.toLowerCase().includes("iphone"),
+      ) ?? cameraDevices[0];
+    const preferredDeviceSource =
+      `device:${preferredDevice.deviceId}` as CameraSourceSelection;
+
+    if (!cameraSource) {
+      setCameraSource(preferredDeviceSource);
+      return;
+    }
+
+    const deviceId = cameraSource.replace("device:", "");
+    const deviceStillAvailable = cameraDevices.some(
+      (device) => device.deviceId === deviceId,
+    );
+
+    if (!deviceStillAvailable) {
+      setCameraSource(preferredDeviceSource);
+      return;
+    }
+
+    const selectedDevice = cameraDevices.find(
+      (device) => device.deviceId === deviceId,
+    );
+    const selectedLooksLikeIPhone = selectedDevice?.label
+      .toLowerCase()
+      .includes("iphone");
+    const preferredLooksLikeIPhone = preferredDevice.label
+      .toLowerCase()
+      .includes("iphone");
+
+    if (!selectedLooksLikeIPhone && preferredLooksLikeIPhone) {
+      setCameraSource(preferredDeviceSource);
+    }
+  }, [cameraDevices, cameraSource, isMounted]);
 
   const handleFileChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,6 +185,11 @@ export const FridgeCapture: React.FC<FridgeCaptureProps> = ({
       return;
     }
 
+    if (!cameraSource) {
+      setCameraError("No camera source detected. Connect a camera and retry.");
+      return;
+    }
+
     if (!navigator.mediaDevices?.getUserMedia) {
       setCameraError("This browser does not support camera capture.");
       return;
@@ -87,24 +199,29 @@ export const FridgeCapture: React.FC<FridgeCaptureProps> = ({
       setIsStartingCamera(true);
       setCameraError(null);
 
+      stopCamera();
+
+      const videoConstraint = {
+        deviceId: { exact: cameraSource.replace("device:", "") },
+      };
+
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: { ideal: "environment" },
-        },
+        video: videoConstraint,
         audio: false,
       });
 
       streamRef.current = stream;
       setCameraOpen(true);
+      await loadCameraDevices();
     } catch {
       setCameraError(
-        "Unable to access camera. Check browser permission settings.",
+        "Unable to access selected camera source. Try another source.",
       );
       stopCamera();
     } finally {
       setIsStartingCamera(false);
     }
-  }, [disabled, isStartingCamera, stopCamera]);
+  }, [cameraSource, disabled, isStartingCamera, loadCameraDevices, stopCamera]);
 
   const handleCloseCamera = useCallback(() => {
     setCameraOpen(false);
@@ -146,6 +263,28 @@ export const FridgeCapture: React.FC<FridgeCaptureProps> = ({
     onImageCapture(capturedFile);
     handleCloseCamera();
   }, [handleCloseCamera, onImageCapture]);
+
+  const handleCameraSourceChange = useCallback(
+    (source: CameraSourceSelection | "") => {
+      setCameraSource(source);
+      setCameraError(null);
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (previousCameraSourceRef.current === cameraSource) {
+      return;
+    }
+
+    previousCameraSourceRef.current = cameraSource;
+
+    if (!cameraOpen || isStartingCamera || disabled) {
+      return;
+    }
+
+    void handleOpenCamera();
+  }, [cameraOpen, cameraSource, disabled, handleOpenCamera, isStartingCamera]);
 
   if (imagePreview) {
     return (
@@ -210,25 +349,61 @@ export const FridgeCapture: React.FC<FridgeCaptureProps> = ({
           </p>
         </div>
       ) : (
-        <div className="flex gap-3 flex-wrap justify-center">
-          <Button
-            disabled={disabled}
-            onClick={handleOpenCamera}
-            className="flex flex-col items-center justify-center gap-2 h-auto py-6 px-8"
-          >
-            <CameraRotate className="h-8 w-8" />
-            <span className="font-medium">Take Photo</span>
-          </Button>
+        <div className="space-y-3">
+          <div className="w-full max-w-md space-y-1">
+            <p className="text-sm font-medium">Camera Source</p>
+            <select
+              value={cameraSource}
+              onChange={(event) =>
+                handleCameraSourceChange(
+                  event.target.value as CameraSourceSelection | "",
+                )
+              }
+              disabled={
+                !isMounted ||
+                disabled ||
+                isLoadingDevices ||
+                cameraDevices.length === 0
+              }
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {!isMounted && (
+                <option value="">Loading camera sources...</option>
+              )}
+              {isMounted && cameraDevices.length === 0 && (
+                <option value="">No camera devices found</option>
+              )}
+              {cameraDevices.map((device, index) => (
+                <option
+                  key={device.deviceId}
+                  value={`device:${device.deviceId}`}
+                >
+                  {device.label || `Camera ${index + 1}`}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <Button
-            variant="outline"
-            disabled={disabled}
-            onClick={() => galleryInputRef.current?.click()}
-            className="flex flex-col items-center justify-center gap-2 h-auto py-6 px-8"
-          >
-            <ImageIcon className="h-8 w-8" />
-            <span className="font-medium">Upload Photo</span>
-          </Button>
+          <div className="flex gap-3 flex-wrap justify-center">
+            <Button
+              disabled={disabled}
+              onClick={handleOpenCamera}
+              className="flex flex-col items-center justify-center gap-2 h-auto py-6 px-8"
+            >
+              <CameraRotate className="h-8 w-8" />
+              <span className="font-medium">Take Photo</span>
+            </Button>
+
+            <Button
+              variant="outline"
+              disabled={disabled}
+              onClick={() => galleryInputRef.current?.click()}
+              className="flex flex-col items-center justify-center gap-2 h-auto py-6 px-8"
+            >
+              <ImageIcon className="h-8 w-8" />
+              <span className="font-medium">Upload Photo</span>
+            </Button>
+          </div>
         </div>
       )}
 
@@ -246,7 +421,8 @@ export const FridgeCapture: React.FC<FridgeCaptureProps> = ({
       )}
 
       <p className="text-sm text-muted-foreground text-center">
-        Use camera capture for a live shot, or upload from your photo library.
+        Pick a specific camera source (for example iPhone Continuity Camera),
+        then capture or upload from your photo library.
       </p>
     </div>
   );
