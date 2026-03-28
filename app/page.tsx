@@ -22,21 +22,6 @@ export default function Home() {
             <span className="text-xl font-bold">Gotownik.love</span>
           </Link>
           <nav className="flex items-center gap-2">
-            <Link href="/fridge">
-              <Button variant="ghost" size="sm">
-                Fridge
-              </Button>
-            </Link>
-            <Link href="/recipe-research">
-              <Button variant="ghost" size="sm">
-                Recipes
-              </Button>
-            </Link>
-            <Link href="/live-cooking">
-              <Button variant="ghost" size="sm">
-                Live Cooking
-              </Button>
-            </Link>
             <Link href="/register">
               <Button size="sm">Get Started</Button>
             </Link>

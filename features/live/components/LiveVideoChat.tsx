@@ -69,7 +69,7 @@ export function LiveVideoChat() {
             <div className="text-center space-y-6">
               <Link
                 href="/"
-                className="inline-block mb-4 text-white/60 hover:text-white transition-colors"
+                className="inline-block mb-8 text-white/80 hover:text-white transition-colors text-lg"
               >
                 ← Gotownik.love
               </Link>
@@ -96,10 +96,10 @@ export function LiveVideoChat() {
             {/* Top bar with status and controls */}
             <div className="absolute top-0 left-0 right-0 p-4 bg-linear-to-b from-black/60 to-transparent">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <Link
                     href="/"
-                    className="text-white/80 hover:text-white transition-colors text-sm flex items-center gap-1"
+                    className="text-white/80 hover:text-white transition-colors flex items-center gap-1"
                   >
                     ← Gotownik.love
                   </Link>

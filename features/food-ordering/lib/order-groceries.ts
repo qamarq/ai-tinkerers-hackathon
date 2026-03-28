@@ -1,8 +1,8 @@
-import { chromium, type Page } from "playwright";
-import { generateText, tool, stepCountIs } from "ai";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import * as fs from "fs";
 import * as path from "path";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { generateText, stepCountIs, tool } from "ai";
+import { chromium, type Page } from "playwright";
 import { z } from "zod";
 
 function createBrowserTools(page: Page) {
@@ -16,7 +16,7 @@ function createBrowserTools(page: Page) {
 
         const clickables = await page.evaluate(() => {
           const els = document.querySelectorAll(
-            'a, button, input, [role="button"], [role="link"], [role="option"], [role="menuitem"], [data-test-id], [aria-label]'
+            'a, button, input, [role="button"], [role="link"], [role="option"], [role="menuitem"], [data-test-id], [aria-label]',
           );
           const results: string[] = [];
           for (const el of Array.from(els)) {
@@ -34,12 +34,11 @@ function createBrowserTools(page: Page) {
 
             let selector = "";
             if (testId) selector = `[data-test-id="${testId}"]`;
-            else if (ariaLabel)
-              selector = `${tag}[aria-label="${ariaLabel}"]`;
+            else if (ariaLabel) selector = `${tag}[aria-label="${ariaLabel}"]`;
             else if (el.id) selector = `#${el.id}`;
 
             results.push(
-              `[${x},${y}] <${tag}>${role ? ` role=${role}` : ""}${selector ? ` sel="${selector}"` : ""} "${text}"${ariaLabel ? ` aria="${ariaLabel}"` : ""}`
+              `[${x},${y}] <${tag}>${role ? ` role=${role}` : ""}${selector ? ` sel="${selector}"` : ""} "${text}"${ariaLabel ? ` aria="${ariaLabel}"` : ""}`,
             );
           }
           return results.slice(0, 50).join("\n");
@@ -67,11 +66,15 @@ function createBrowserTools(page: Page) {
       description:
         "Kliknij element. Metody: 'text' (po widocznym tekście), 'css' (selektor CSS), 'role' (po roli ARIA).",
       inputSchema: z.object({
-        selector: z.string().describe("Tekst, selektor CSS, lub nazwa dla roli ARIA"),
+        selector: z
+          .string()
+          .describe("Tekst, selektor CSS, lub nazwa dla roli ARIA"),
         method: z
           .enum(["css", "text", "role"])
           .default("text")
-          .describe("'text' – po tekście, 'css' – selektor CSS, 'role' – po roli ARIA"),
+          .describe(
+            "'text' – po tekście, 'css' – selektor CSS, 'role' – po roli ARIA",
+          ),
         role: z
           .enum(["button", "link", "menuitem", "option", "tab"])
           .optional()
@@ -94,10 +97,7 @@ function createBrowserTools(page: Page) {
               .first()
               .click({ timeout: 8000 });
           } else {
-            await page
-              .locator(input.selector)
-              .first()
-              .click({ timeout: 8000 });
+            await page.locator(input.selector).first().click({ timeout: 8000 });
           }
           await page.waitForLoadState("domcontentloaded");
           return `Kliknięto: ${input.selector}`;
@@ -111,10 +111,7 @@ function createBrowserTools(page: Page) {
       description:
         "Pobierz fragment HTML strony – pomaga znaleźć poprawne selektory CSS.",
       inputSchema: z.object({
-        selector: z
-          .string()
-          .default("body")
-          .describe("Selektor CSS elementu"),
+        selector: z.string().default("body").describe("Selektor CSS elementu"),
         maxLength: z
           .number()
           .default(3000)
@@ -241,7 +238,7 @@ function createBrowserTools(page: Page) {
       execute: async (input: { direction: "down" | "up"; amount: number }) => {
         await page.mouse.wheel(
           0,
-          input.direction === "down" ? input.amount : -input.amount
+          input.direction === "down" ? input.amount : -input.amount,
         );
         await page.waitForLoadState("domcontentloaded");
         return `Przewinięto ${input.direction} o ${input.amount}px`;
@@ -337,7 +334,7 @@ export async function orderGroceries(items: string[]): Promise<OrderResult> {
 
   const cookiePath = path.resolve(
     path.dirname(new URL(import.meta.url).pathname),
-    "wolt-cookies.txt"
+    "wolt-cookies.txt",
   );
   if (fs.existsSync(cookiePath)) {
     const raw = fs.readFileSync(cookiePath, "utf-8").trim();
@@ -376,7 +373,7 @@ export async function orderGroceries(items: string[]): Promise<OrderResult> {
           if (tr.toolName !== "screenshot") {
             console.log(
               `[${tr.toolName}]`,
-              JSON.stringify(tr.output).slice(0, 150)
+              JSON.stringify(tr.output).slice(0, 150),
             );
           } else {
             console.log("[screenshot] <obraz>");
