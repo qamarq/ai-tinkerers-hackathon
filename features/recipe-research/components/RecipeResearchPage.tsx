@@ -57,7 +57,7 @@ export function RecipeResearchPage() {
   const [liveActivity, setLiveActivity] = useState<
     RecipeResearchResult["activity"]
   >([]);
-  const [fakeProgress, setFakeProgress] = useState(0);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const activityTimersRef = useRef<number[]>([]);
   const completedQuickSearchSeedRef = useRef<string | null>(null);
   const inFlightQuickSearchSeedRef = useRef<string | null>(null);
@@ -97,18 +97,63 @@ export function RecipeResearchPage() {
 
   useEffect(() => {
     if (!isLoading) {
-      setFakeProgress(0);
+      setLiveActivity([]);
       return;
     }
 
-    const interval = window.setInterval(() => {
-      setFakeProgress((prev) => {
-        if (prev >= 90) return prev;
-        return prev + Math.random() * 15;
-      });
-    }, 500);
+    const streamPlan: Array<RecipeResearchResult["activity"][number]> = [
+      {
+        type: "search",
+        status: "pending",
+        message: "Searching recipe sources across the web",
+        timestamp: new Date().toISOString(),
+      },
+      {
+        type: "extract",
+        status: "pending",
+        message: "Extracting recipe details from top matches",
+        timestamp: new Date().toISOString(),
+      },
+      {
+        type: "analyze",
+        status: "pending",
+        message: "Analyzing ingredients and nutrition",
+        timestamp: new Date().toISOString(),
+      },
+      {
+        type: "synthesis",
+        status: "pending",
+        message: "Ranking and preparing your best 3 matches",
+        timestamp: new Date().toISOString(),
+      },
+    ];
 
-    return () => window.clearInterval(interval);
+    setLiveActivity([]);
+    setCurrentStepIndex(0);
+    let currentIndex = 0;
+
+    const tick = () => {
+      setLiveActivity((prev) => {
+        if (prev.length > currentIndex) return prev;
+
+        const newActivity = [...prev];
+        if (currentIndex < streamPlan.length) {
+          newActivity.push({
+            ...streamPlan[currentIndex],
+            timestamp: new Date().toISOString(),
+          });
+        }
+        return newActivity;
+      });
+
+      if (currentIndex < streamPlan.length - 1) {
+        currentIndex++;
+        setCurrentStepIndex(currentIndex);
+        setTimeout(tick, 500);
+      }
+    };
+
+    tick();
   }, [isLoading]);
 
   const fridgeNames = useMemo(
@@ -208,48 +253,6 @@ export function RecipeResearchPage() {
     reset();
     setResult(null);
     clearActivityTimers();
-    setLiveActivity([]);
-
-    const streamPlan: Array<RecipeResearchResult["activity"][number]> = [
-      {
-        type: "search",
-        status: "pending",
-        message: "Searching recipe sources across the web",
-        timestamp: new Date().toISOString(),
-      },
-      {
-        type: "extract",
-        status: "pending",
-        message: "Extracting recipe details from top matches",
-        timestamp: new Date().toISOString(),
-      },
-      {
-        type: "analyze",
-        status: "pending",
-        message: "Analyzing ingredients and nutrition",
-        timestamp: new Date().toISOString(),
-      },
-      {
-        type: "synthesis",
-        status: "pending",
-        message: "Ranking and preparing your best 3 matches",
-        timestamp: new Date().toISOString(),
-      },
-    ];
-
-    streamPlan.forEach((item, index) => {
-      const timerId = window.setTimeout(() => {
-        setLiveActivity((previous) => [
-          ...previous,
-          {
-            ...item,
-            timestamp: new Date().toISOString(),
-          },
-        ]);
-      }, index * 1100);
-
-      activityTimersRef.current.push(timerId);
-    });
 
     try {
       const response = await findRecipes({
@@ -305,7 +308,7 @@ export function RecipeResearchPage() {
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8 space-y-12">
+      <div className="max-w-5xl mx-auto px-4 py-12 sm:px-6 lg:px-8 space-y-12">
         {!isLoading && !result && (
           <>
             <div className="text-center space-y-4">
@@ -422,33 +425,35 @@ export function RecipeResearchPage() {
                     <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                       Quick searches
                     </p>
-                    {isSuggestingQuickSearches && quickSearches.length === 0 ? (
-                      <div className="flex flex-wrap gap-2">
-                        <Badge
-                          variant="secondary"
-                          className="rounded-full px-3 py-1"
-                        >
-                          Generating suggestions...
-                        </Badge>
-                      </div>
-                    ) : (
-                      <div className="flex flex-wrap gap-2">
-                        {quickSearches.map((search) => (
+                    <div className="flex flex-wrap gap-2">
+                      {(isSuggestingQuickSearches
+                        ? [1, 2, 3, 4]
+                        : quickSearches
+                      ).map((item, index) =>
+                        typeof item === "string" ? (
                           <Button
-                            key={search}
+                            key={item}
                             type="button"
                             variant="outline"
                             size="sm"
                             onClick={() => {
-                              void handleResearch(search);
+                              void handleResearch(item);
                             }}
                             className="rounded-full"
                           >
-                            {search}
+                            {item}
                           </Button>
-                        ))}
-                      </div>
-                    )}
+                        ) : (
+                          <Skeleton
+                            key={`skeleton-${index}`}
+                            className="h-8 rounded-full"
+                            style={{
+                              width: `${120 + index * 20}px`,
+                            }}
+                          />
+                        ),
+                      )}
+                    </div>
                   </div>
                 )}
 
@@ -568,11 +573,41 @@ export function RecipeResearchPage() {
                     </div>
                     {item.status === "pending" && isLoading && (
                       <div className="w-16">
-                        <Progress value={fakeProgress} className="h-1.5" />
+                        <Progress
+                          value={100}
+                          className="h-1.5 animate-progress"
+                        />
                       </div>
                     )}
                   </div>
                 ))}
+                {liveActivity.length === 4 && isLoading && (
+                  <div className="flex flex-col items-center justify-center py-6 gap-3">
+                    <div className="relative">
+                      <CookingPot
+                        className="h-12 w-12 text-primary animate-bounce"
+                        weight="fill"
+                      />
+                      <div className="absolute -top-1 left-1/2 -translate-x-1/2 flex gap-1">
+                        <div
+                          className="w-1 h-3 bg-muted-foreground/50 rounded-full animate-pulse"
+                          style={{ animationDelay: "0ms" }}
+                        />
+                        <div
+                          className="w-1 h-4 bg-muted-foreground/50 rounded-full animate-pulse"
+                          style={{ animationDelay: "150ms" }}
+                        />
+                        <div
+                          className="w-1 h-3 bg-muted-foreground/50 rounded-full animate-pulse"
+                          style={{ animationDelay: "300ms" }}
+                        />
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground animate-pulse">
+                      Cooking up your recipes...
+                    </p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
