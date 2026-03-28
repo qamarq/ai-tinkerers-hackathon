@@ -1,17 +1,3 @@
-import type { Locale } from "@/i18n/locales";
-
-export const supportedLanguages: Locale[] = [
-  "en",
-  "es",
-  "fr",
-  "de",
-  "it",
-  "pt",
-  "ja",
-  "ko",
-  "zh",
-];
-
 export const defaultCookingDifficulty = "intermediate" as const;
 
 export const defaultKitchenType = "residential" as const;
@@ -25,20 +11,12 @@ export const difficultyColors = {
   professional: "bg-red-500",
 } as const;
 
-export const difficultyLabels: Record<string, Record<string, string>> = {
-  en: {
-    beginner: "Beginner",
-    intermediate: "Intermediate",
-    advanced: "Advanced",
-    professional: "Professional",
-  },
-  es: {
-    beginner: "Principiante",
-    intermediate: "Intermedio",
-    advanced: "Avanzado",
-    professional: "Profesional",
-  },
-};
+export const difficultyLabels = {
+  beginner: "Beginner",
+  intermediate: "Intermediate",
+  advanced: "Advanced",
+  professional: "Professional",
+} as const;
 
 export const cookingCategories = [
   "appetizer",

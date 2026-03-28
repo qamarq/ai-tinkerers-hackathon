@@ -10,7 +10,6 @@ import {
   Timer,
   XCircle,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -36,7 +35,6 @@ export function LiveCookingView({
   onNextStep,
   onPreviousStep,
 }: LiveCookingViewProps) {
-  const t = useTranslations("liveCooking");
   const currentStep = session.recipe.steps[session.currentStepIndex];
   const progress =
     ((session.currentStepIndex + 1) / session.recipe.steps.length) * 100;
@@ -51,7 +49,7 @@ export function LiveCookingView({
           <h1 className="text-3xl font-bold tracking-tight">
             {session.recipe.name}
           </h1>
-          <p className="text-muted-foreground">{t("cookingInProgress")}</p>
+          <p className="text-muted-foreground">Cooking in Progress</p>
         </div>
         <Badge
           variant={
@@ -87,12 +85,10 @@ export function LiveCookingView({
                 {session.currentStepIndex + 1}/{session.recipe.steps.length}
               </div>
               <div>
-                <p className="font-medium">{t("currentStep")}</p>
+                <p className="font-medium">Current Step</p>
                 <p className="text-sm text-muted-foreground">
-                  {t("stepOf", {
-                    current: session.currentStepIndex + 1,
-                    total: session.recipe.steps.length,
-                  })}
+                  Step {session.currentStepIndex + 1} of{" "}
+                  {session.recipe.steps.length}
                 </p>
               </div>
             </div>
@@ -136,7 +132,7 @@ export function LiveCookingView({
                     <div className="rounded-lg bg-muted/50 p-4">
                       <h4 className="font-medium mb-2 flex items-center gap-2">
                         <ChefHat className="h-4 w-4" />
-                        {t("ingredients")} ({t("currentStep")})
+                        Ingredients (Current Step)
                       </h4>
                       <ul className="space-y-1">
                         {currentStep.ingredients.map((ing) => (
@@ -164,7 +160,7 @@ export function LiveCookingView({
                   <div className="space-y-2">
                     <h4 className="font-medium flex items-center gap-2">
                       <ChefHat className="h-4 w-4" />
-                      {t("equipment")}
+                      Equipment
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {currentStep.equipment.map((item) => (
@@ -195,16 +191,16 @@ export function LiveCookingView({
               onClick={onPreviousStep}
               disabled={isFirstStep}
             >
-              {t("previousStep")}
+              Previous Step
             </Button>
             {isLastStep ? (
               <Button variant="default" size="lg" onClick={onStop}>
                 <CheckCircle2 className="h-5 w-5 mr-2" />
-                {t("cookingComplete")}
+                Cooking Complete!
               </Button>
             ) : (
               <Button variant="default" size="lg" onClick={onNextStep}>
-                {t("nextStep")}
+                Next Step
                 <SkipForward className="h-5 w-5 ml-2" />
               </Button>
             )}
@@ -218,18 +214,18 @@ export function LiveCookingView({
               {session.status === "cooking" ? (
                 <>
                   <Pause className="h-4 w-4 mr-2" />
-                  {t("pauseCooking")}
+                  Pause
                 </>
               ) : (
                 <>
                   <Play className="h-4 w-4 mr-2" />
-                  {t("resumeCooking")}
+                  Resume
                 </>
               )}
             </Button>
             <Button variant="destructive" onClick={onStop}>
               <XCircle className="h-4 w-4 mr-2" />
-              {t("stopCooking")}
+              Stop Cooking
             </Button>
           </div>
         </div>
@@ -237,7 +233,7 @@ export function LiveCookingView({
         <div className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">{t("instructions")}</CardTitle>
+              <CardTitle className="text-lg">Instructions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 max-h-96 overflow-y-auto">
               {session.recipe.steps.map((step, index) => (
@@ -287,7 +283,7 @@ export function LiveCookingView({
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">{t("ingredients")}</CardTitle>
+              <CardTitle className="text-lg">Ingredients</CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
@@ -312,7 +308,7 @@ export function LiveCookingView({
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">{t("remainingTime")}</CardTitle>
+              <CardTitle className="text-lg">Remaining Time</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center">

@@ -12,7 +12,6 @@ import {
   Users,
   Utensils,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -52,9 +51,6 @@ export function CookingDashboard({
   recipes = [],
   statistics,
 }: CookingDashboardProps) {
-  const t = useTranslations("liveCooking");
-  const td = useTranslations("dashboard");
-
   const stats = statistics || {
     totalMeals: 12,
     totalCookingTime: 480,
@@ -66,15 +62,15 @@ export function CookingDashboard({
   return (
     <div className="container mx-auto py-8 space-y-8">
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-muted-foreground">{t("subtitle")}</p>
+        <h1 className="text-3xl font-bold tracking-tight">Live Cooking</h1>
+        <p className="text-muted-foreground">Automate your cooking process</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {td("todaysMeals")}
+              Today&apos;s Meals
             </CardTitle>
             <Utensils className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -86,9 +82,7 @@ export function CookingDashboard({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {td("activeCooks")}
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Active Cooks</CardTitle>
             <Flame className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -99,9 +93,7 @@ export function CookingDashboard({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {td("mealHistory")}
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Meal History</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -116,8 +108,8 @@ export function CookingDashboard({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>{td("recentActivity")}</CardTitle>
-            <CardDescription>{td("noActivity")}</CardDescription>
+            <CardTitle>Recent Activity</CardTitle>
+            <CardDescription>No recent activity</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {activeSessions.length > 0 ? (
@@ -140,7 +132,7 @@ export function CookingDashboard({
             ) : (
               <div className="text-center py-8 text-muted-foreground">
                 <ChefHat className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>{td("noActivity")}</p>
+                <p>No recent activity</p>
               </div>
             )}
           </CardContent>
@@ -148,7 +140,7 @@ export function CookingDashboard({
 
         <Card>
           <CardHeader>
-            <CardTitle>{td("quickActions")}</CardTitle>
+            <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -158,7 +150,7 @@ export function CookingDashboard({
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500/10">
                       <Play className="h-6 w-6 text-green-500" />
                     </div>
-                    <p className="text-sm font-medium">{t("startCooking")}</p>
+                    <p className="text-sm font-medium">Start Cooking</p>
                   </div>
                 </CardContent>
               </Card>
@@ -169,7 +161,7 @@ export function CookingDashboard({
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-500/10">
                       <Pause className="h-6 w-6 text-yellow-500" />
                     </div>
-                    <p className="text-sm font-medium">{t("pauseCooking")}</p>
+                    <p className="text-sm font-medium">Pause</p>
                   </div>
                 </CardContent>
               </Card>
@@ -180,7 +172,7 @@ export function CookingDashboard({
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/10">
                       <SkipForward className="h-6 w-6 text-blue-500" />
                     </div>
-                    <p className="text-sm font-medium">{t("nextStep")}</p>
+                    <p className="text-sm font-medium">Next Step</p>
                   </div>
                 </CardContent>
               </Card>
@@ -191,9 +183,7 @@ export function CookingDashboard({
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                       <CheckCircle2 className="h-6 w-6 text-primary" />
                     </div>
-                    <p className="text-sm font-medium">
-                      {t("cookingComplete")}
-                    </p>
+                    <p className="text-sm font-medium">Cooking Complete!</p>
                   </div>
                 </CardContent>
               </Card>
@@ -211,8 +201,6 @@ interface RecipeCardProps {
 }
 
 export function RecipeCard({ recipe, onClick }: RecipeCardProps) {
-  const t = useTranslations("liveCooking");
-
   return (
     <Card
       className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
@@ -252,12 +240,12 @@ export function RecipeCard({ recipe, onClick }: RecipeCardProps) {
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">{t("prepTime")}:</span>
+            <span className="text-muted-foreground">Prep Time:</span>
             <span>{formatDuration(recipe.prepTime)}</span>
           </div>
           <div className="flex items-center gap-2">
             <Flame className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">{t("cookTime")}:</span>
+            <span className="text-muted-foreground">Cook Time:</span>
             <span>{formatDuration(recipe.cookTime)}</span>
           </div>
         </div>
@@ -284,8 +272,6 @@ export function CookingStepCard({
   isActive = false,
   isCompleted = false,
 }: CookingStepCardProps) {
-  const t = useTranslations("liveCooking");
-
   return (
     <Card className={isActive ? "ring-2 ring-primary" : ""}>
       <CardHeader className="pb-2">
@@ -304,7 +290,7 @@ export function CookingStepCard({
           <div className="space-y-1 flex-1">
             <CardTitle className="text-lg">{step.title}</CardTitle>
             <p className="text-sm text-muted-foreground">
-              {t("stepOf", { current: stepNumber, total: totalSteps })}
+              Step {stepNumber} of {totalSteps}
             </p>
           </div>
           {step.temperature && (
@@ -321,14 +307,14 @@ export function CookingStepCard({
         {step.duration && (
           <div className="flex items-center gap-2 text-sm">
             <Clock className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">{t("duration")}:</span>
+            <span className="text-muted-foreground">Duration:</span>
             <span>{formatDuration(step.duration)}</span>
           </div>
         )}
 
         {step.ingredients && step.ingredients.length > 0 && (
           <div className="space-y-2">
-            <h4 className="text-sm font-medium">{t("ingredients")}</h4>
+            <h4 className="text-sm font-medium">Ingredients</h4>
             <ul className="text-sm space-y-1">
               {step.ingredients.map((ingredient) => (
                 <li key={ingredient.id} className="flex items-center gap-2">
@@ -344,7 +330,7 @@ export function CookingStepCard({
 
         {step.equipment && step.equipment.length > 0 && (
           <div className="space-y-2">
-            <h4 className="text-sm font-medium">{t("equipment")}</h4>
+            <h4 className="text-sm font-medium">Equipment</h4>
             <div className="flex flex-wrap gap-2">
               {step.equipment.map((item) => (
                 <Badge key={item} variant="secondary">
@@ -380,7 +366,6 @@ export function ActiveCookingCard({
   onStop,
   onNextStep,
 }: ActiveCookingCardProps) {
-  const t = useTranslations("liveCooking");
   const currentStep = session.recipe.steps[session.currentStepIndex];
   const progress =
     ((session.currentStepIndex + 1) / session.recipe.steps.length) * 100;
@@ -390,7 +375,7 @@ export function ActiveCookingCard({
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <CardTitle>{t("cookingInProgress")}</CardTitle>
+            <CardTitle>Cooking in Progress</CardTitle>
             <CardDescription>{session.recipe.name}</CardDescription>
           </div>
           <Badge
@@ -409,12 +394,10 @@ export function ActiveCookingCard({
       <CardContent className="space-y-6">
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span>{t("currentStep")}</span>
+            <span>Current Step</span>
             <span>
-              {t("stepOf", {
-                current: session.currentStepIndex + 1,
-                total: session.recipe.steps.length,
-              })}
+              Step {session.currentStepIndex + 1} of{" "}
+              {session.recipe.steps.length}
             </span>
           </div>
           <Progress value={progress} className="h-2" />
@@ -433,20 +416,20 @@ export function ActiveCookingCard({
           {session.status === "cooking" ? (
             <Button variant="secondary" onClick={onPause} className="flex-1">
               <Pause className="h-4 w-4 mr-2" />
-              {t("pauseCooking")}
+              Pause
             </Button>
           ) : (
             <Button variant="secondary" onClick={onResume} className="flex-1">
               <Play className="h-4 w-4 mr-2" />
-              {t("resumeCooking")}
+              Resume
             </Button>
           )}
           <Button variant="outline" onClick={onNextStep} className="flex-1">
             <SkipForward className="h-4 w-4 mr-2" />
-            {t("nextStep")}
+            Next Step
           </Button>
           <Button variant="destructive" onClick={onStop}>
-            {t("stopCooking")}
+            Stop Cooking
           </Button>
         </div>
       </CardContent>

@@ -15,7 +15,6 @@ import {
   Users,
   Utensils,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -117,7 +116,6 @@ export function RegistrationFlow({
   onComplete,
   onCancel,
 }: RegistrationFlowProps) {
-  const t = useTranslations("registration");
   const [currentStep, setCurrentStep] = useState(1);
 
   void onCancel;
@@ -212,8 +210,12 @@ export function RegistrationFlow({
   return (
     <div className="container mx-auto py-8 max-w-2xl">
       <div className="space-y-2 mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-muted-foreground">{t("subtitle")}</p>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Create Your Account
+        </h1>
+        <p className="text-muted-foreground">
+          Join us to start automating your cooking
+        </p>
       </div>
 
       <div className="mb-8">
@@ -243,7 +245,13 @@ export function RegistrationFlow({
                     )}
                   </div>
                   <span className="text-xs mt-1 hidden sm:block">
-                    {t(step.titleKey)}
+                    {step.titleKey === "accountType"
+                      ? "Account Type"
+                      : step.titleKey === "kitchenSetup"
+                        ? "Kitchen Setup"
+                        : step.titleKey === "cookingGoals"
+                          ? "Cooking Goals"
+                          : "Review"}
                   </span>
                 </div>
                 {step.id < totalSteps && (
@@ -260,27 +268,36 @@ export function RegistrationFlow({
         </div>
         <Progress value={progress} className="h-2 mt-4" />
         <p className="text-sm text-muted-foreground text-center mt-2">
-          {t("step", { current: currentStep, total: totalSteps })}
+          Step {currentStep} of {totalSteps}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>{t(STEPS[currentStep - 1].titleKey)}</CardTitle>
+          <CardTitle>
+            {currentStep === 1
+              ? "Account Type"
+              : currentStep === 2
+                ? "Kitchen Setup"
+                : currentStep === 3
+                  ? "Cooking Goals"
+                  : "Review"}
+          </CardTitle>
           <CardDescription>
-            {currentStep === 4 ? t("reviewDesc") : ""}
+            {currentStep === 4
+              ? "Please review your information before creating your account"
+              : ""}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {currentStep === 1 && (
-            <StepOne data={formData.step1} onUpdate={updateStep1} t={t} />
+            <StepOne data={formData.step1} onUpdate={updateStep1} />
           )}
 
           {currentStep === 2 && (
             <StepTwo
               data={formData.step2}
               onUpdate={updateStep2}
-              t={t}
               toggleEquipment={(eq) =>
                 toggleArrayValue(formData.step2.equipment, eq, (val) =>
                   updateStep2({ equipment: val }),
@@ -293,7 +310,6 @@ export function RegistrationFlow({
             <StepThree
               data={formData.step3}
               onUpdate={updateStep3}
-              t={t}
               toggleGoal={(goal) =>
                 toggleArrayValue(formData.step3.cookingGoals, goal, (val) =>
                   updateStep3({ cookingGoals: val }),
@@ -309,13 +325,13 @@ export function RegistrationFlow({
             />
           )}
 
-          {currentStep === 4 && <ReviewStep data={formData} t={t} />}
+          {currentStep === 4 && <ReviewStep data={formData} />}
 
           <div className="flex gap-4 pt-4">
             {currentStep > 1 && (
               <Button variant="outline" onClick={handleBack} className="flex-1">
                 <ChevronLeft className="h-4 w-4 mr-2" />
-                {t("back")}
+                Back
               </Button>
             )}
             <Button
@@ -325,12 +341,12 @@ export function RegistrationFlow({
             >
               {currentStep === totalSteps ? (
                 <>
-                  {t("submit")}
+                  Submit
                   <ChefHat className="h-4 w-4 ml-2" />
                 </>
               ) : (
                 <>
-                  {t("next")}
+                  Next
                   <ChevronRight className="h-4 w-4 ml-2" />
                 </>
               )}
@@ -345,16 +361,14 @@ export function RegistrationFlow({
 function StepOne({
   data,
   onUpdate,
-  t,
 }: {
   data: RegistrationData["step1"];
   onUpdate: (data: Partial<RegistrationData["step1"]>) => void;
-  t: ReturnType<typeof useTranslations>;
 }) {
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <Label>{t("accountType")}</Label>
+        <Label>Account Type</Label>
         <div className="grid grid-cols-2 gap-4">
           <Card
             className={cn(
@@ -367,9 +381,9 @@ function StepOne({
             <CardContent className="pt-6">
               <div className="flex flex-col items-center gap-2">
                 <Home className="h-8 w-8" />
-                <p className="font-medium">{t("personal")}</p>
+                <p className="font-medium">Personal</p>
                 <p className="text-xs text-muted-foreground text-center">
-                  {t("personalDesc")}
+                  For home cooking enthusiasts
                 </p>
               </div>
             </CardContent>
@@ -385,9 +399,9 @@ function StepOne({
             <CardContent className="pt-6">
               <div className="flex flex-col items-center gap-2">
                 <Building2 className="h-8 w-8" />
-                <p className="font-medium">{t("professional")}</p>
+                <p className="font-medium">Professional</p>
                 <p className="text-xs text-muted-foreground text-center">
-                  {t("professionalDesc")}
+                  For chefs and food businesses
                 </p>
               </div>
             </CardContent>
@@ -396,7 +410,7 @@ function StepOne({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="fullName">{t("fullName")}</Label>
+        <Label htmlFor="fullName">Full Name</Label>
         <Input
           id="fullName"
           value={data.fullName}
@@ -406,7 +420,7 @@ function StepOne({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="email">{t("email")}</Label>
+        <Label htmlFor="email">Email</Label>
         <Input
           id="email"
           type="email"
@@ -417,7 +431,7 @@ function StepOne({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="phone">{t("phone")}</Label>
+        <Label htmlFor="phone">Phone Number</Label>
         <Input
           id="phone"
           type="tel"
@@ -433,18 +447,16 @@ function StepOne({
 function StepTwo({
   data,
   onUpdate,
-  t,
   toggleEquipment,
 }: {
   data: RegistrationData["step2"];
   onUpdate: (data: Partial<RegistrationData["step2"]>) => void;
-  t: ReturnType<typeof useTranslations>;
   toggleEquipment: (eq: string) => void;
 }) {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="kitchenName">{t("kitchenName")}</Label>
+        <Label htmlFor="kitchenName">Kitchen Name</Label>
         <Input
           id="kitchenName"
           value={data.kitchenName}
@@ -454,7 +466,7 @@ function StepTwo({
       </div>
 
       <div className="space-y-4">
-        <Label>{t("kitchenType")}</Label>
+        <Label>Kitchen Type</Label>
         <div className="grid grid-cols-2 gap-4">
           <Card
             className={cn(
@@ -467,7 +479,7 @@ function StepTwo({
             <CardContent className="pt-6">
               <div className="flex flex-col items-center gap-2">
                 <Home className="h-8 w-8" />
-                <p className="font-medium">{t("residential")}</p>
+                <p className="font-medium">Residential</p>
               </div>
             </CardContent>
           </Card>
@@ -482,7 +494,7 @@ function StepTwo({
             <CardContent className="pt-6">
               <div className="flex flex-col items-center gap-2">
                 <Building2 className="h-8 w-8" />
-                <p className="font-medium">{t("commercial")}</p>
+                <p className="font-medium">Commercial</p>
               </div>
             </CardContent>
           </Card>
@@ -490,7 +502,7 @@ function StepTwo({
       </div>
 
       <div className="space-y-4">
-        <Label>{t("equipment")}</Label>
+        <Label>Your Equipment</Label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {EQUIPMENT_OPTIONS.map((equipment) => (
             <Card
@@ -522,20 +534,18 @@ function StepTwo({
 function StepThree({
   data,
   onUpdate,
-  t,
   toggleGoal,
   toggleDietary,
 }: {
   data: RegistrationData["step3"];
   onUpdate: (data: Partial<RegistrationData["step3"]>) => void;
-  t: ReturnType<typeof useTranslations>;
   toggleGoal: (goal: string) => void;
   toggleDietary: (pref: string) => void;
 }) {
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <Label>{t("experience")}</Label>
+        <Label>Cooking Experience Level</Label>
         <div className="grid grid-cols-2 gap-3">
           {EXPERIENCE_LEVELS.map((level) => (
             <Card
@@ -562,7 +572,7 @@ function StepThree({
                     <ChefHat className="h-5 w-5 text-red-500" />
                   )}
                   <span className="text-sm font-medium capitalize">
-                    {t(level)}
+                    {level}
                   </span>
                 </div>
               </CardContent>
@@ -572,7 +582,7 @@ function StepThree({
       </div>
 
       <div className="space-y-4">
-        <Label>{t("cookingGoals")}</Label>
+        <Label>Cooking Goals</Label>
         <div className="grid grid-cols-2 gap-3">
           {COOKING_GOALS.map((goal) => (
             <Card
@@ -599,7 +609,7 @@ function StepThree({
       </div>
 
       <div className="space-y-4">
-        <Label>{t("preferences")}</Label>
+        <Label>Dietary Preferences</Label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {DIETARY_PREFERENCES.map((pref) => (
             <Card
@@ -630,18 +640,12 @@ function StepThree({
   );
 }
 
-function ReviewStep({
-  data,
-  t,
-}: {
-  data: RegistrationData;
-  t: ReturnType<typeof useTranslations>;
-}) {
+function ReviewStep({ data }: { data: RegistrationData }) {
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">{t("accountType")}</CardTitle>
+          <CardTitle className="text-base">Account Type</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex justify-between">
@@ -667,7 +671,7 @@ function ReviewStep({
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">{t("kitchenSetup")}</CardTitle>
+          <CardTitle className="text-base">Kitchen Setup</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex justify-between">
@@ -693,7 +697,7 @@ function ReviewStep({
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">{t("cookingGoals")}</CardTitle>
+          <CardTitle className="text-base">Cooking Goals</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex justify-between">
