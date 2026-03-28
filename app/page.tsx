@@ -22,7 +22,7 @@ export default function Home() {
             <span className="text-xl font-bold">Gotownik.love</span>
           </Link>
           <nav className="flex items-center gap-2">
-            <Link href="/register">
+            <Link href="/fridge">
               <Button size="sm">Get Started</Button>
             </Link>
           </nav>
@@ -40,7 +40,7 @@ export default function Home() {
             time.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/register">
+            <Link href="/fridge">
               <Button size="lg" className="w-full sm:w-auto">
                 Start Cooking
                 <ArrowRight className="ml-2 h-5 w-5" />
