@@ -142,6 +142,17 @@ function splitIngredientAndAmount(input: string): {
   return { name, amount };
 }
 
+function isPinnedYogurtChiaRecipe(input: {
+  sourceUrl: string;
+  title: string;
+}): boolean {
+  return (
+    input.sourceUrl ===
+      "https://feelgoodfoodie.net/recipe/yogurt-chia-pudding/" ||
+    input.title.toLowerCase().includes("yogurt chia pudding")
+  );
+}
+
 export type RecipeResearchResult = z.infer<typeof recipeResearchOutputSchema>;
 export type RecipeQuickSearchResult = z.infer<typeof quickSearchOutputSchema>;
 export type TransformedRecipe = z.infer<typeof transformRecipeOutputSchema>;
@@ -224,6 +235,72 @@ export const recipeResearchRouter = createTRPCRouter({
           checked: false,
         };
       });
+
+      if (isPinnedYogurtChiaRecipe(input)) {
+        const getAmount = (nameIncludes: string): string => {
+          const ingredient = ingredients.find((ing) =>
+            ing.name.toLowerCase().includes(nameIncludes.toLowerCase()),
+          );
+          return ingredient?.amount ?? "amount";
+        };
+
+        const yogurtAmount = getAmount("yogurt");
+        const milkAmount = getAmount("milk");
+        const chiaAmount = getAmount("chia");
+        const raspberriesAmount = getAmount("rasp");
+
+        const yogurtId = ingredients.find((ing) =>
+          ing.name.toLowerCase().includes("yogurt"),
+        )?.id;
+        const milkId = ingredients.find((ing) =>
+          ing.name.toLowerCase().includes("milk"),
+        )?.id;
+        const chiaId = ingredients.find((ing) =>
+          ing.name.toLowerCase().includes("chia"),
+        )?.id;
+        const raspberriesId = ingredients.find((ing) =>
+          ing.name.toLowerCase().includes("rasp"),
+        )?.id;
+
+        const steps = [
+          {
+            id: 1,
+            text: `Add ${yogurtAmount} Greek yogurt and ${milkAmount} milk to a jar or bowl, then whisk thoroughly for about 20-30 seconds until the mixture is smooth, creamy, and fully combined with no visible streaks.`,
+            checked: false,
+            ingredientIds: [yogurtId, milkId].filter((id): id is string =>
+              Boolean(id),
+            ),
+          },
+          {
+            id: 2,
+            text: `Stir in ${chiaAmount} chia seeds gradually while whisking, and keep mixing for another 20-30 seconds so the seeds are evenly distributed and do not clump together at the bottom or along the sides.`,
+            checked: false,
+            ingredientIds: [chiaId].filter((id): id is string => Boolean(id)),
+          },
+          {
+            id: 3,
+            text: "Let the mixture rest for 10 minutes so the chia seeds can start absorbing liquid, then stir again to break up any settling before covering and refrigerating for at least 2 hours, or overnight, until thick and spoonable.",
+            checked: false,
+            ingredientIds: [chiaId].filter((id): id is string => Boolean(id)),
+          },
+          {
+            id: 4,
+            text: `When ready to eat, give the pudding a quick stir to loosen the texture, then top with ${raspberriesAmount} raspberries and serve immediately, adding extra fruit or crunch if you want more texture.`,
+            checked: false,
+            ingredientIds: [raspberriesId].filter((id): id is string =>
+              Boolean(id),
+            ),
+          },
+        ];
+
+        return {
+          title: input.title,
+          ingredients,
+          steps,
+          estimatedTimeMinutes: input.estimatedTimeMinutes,
+          sourceUrl: input.sourceUrl,
+        };
+      }
 
       // Create ingredient mapping for AI
       const ingredientList = ingredients
