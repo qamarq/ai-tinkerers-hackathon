@@ -114,7 +114,7 @@ export const FridgePage: React.FC = () => {
               <Button
                 className="w-full"
                 disabled={!imagePreview}
-                onClick={() => router.push("/")}
+                onClick={() => router.push("/recipe-research")}
               >
                 Go To Next Page
               </Button>
