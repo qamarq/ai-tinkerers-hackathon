@@ -132,6 +132,53 @@ Generate stunning 3D models of your dishes using Meshy AI. See what your meal wi
 - Real-time generation progress tracking
 - Shareable 3D previews
 
+### Wagownik - MacBook Kitchen Scale
+
+**Your MacBook is now a kitchen scale.** Seriously.
+
+Wagownik is a native macOS companion app that turns your MacBook's Force Touch trackpad into a real, working kitchen scale. No extra hardware needed—just open the app, place your ingredient on the trackpad, and get instant gram-accurate readings that sync directly with the AI cooking assistant.
+
+**How it works:**
+
+1. The AI chef asks you to weigh an ingredient (e.g., "Please weigh 15g of butter")
+2. Wagownik app receives the weighing request via API
+3. Place the ingredient on your MacBook trackpad while keeping finger contact
+4. The app measures weight using Force Touch pressure sensors
+5. Weight is automatically sent back to the AI chef
+6. AI confirms the measurement and continues guiding you
+
+**Key Features:**
+
+- **Zero hardware required** - Your MacBook trackpad IS the scale
+- **Seamless integration** - Works alongside the AI cooking assistant
+- **Precision calibrated** - Validated against professional digital scales
+- **Beautiful native UI** - Clean SwiftUI interface that stays out of your way
+- **Real-time sync** - Measurements flow instantly into your recipe steps
+
+**Requirements:**
+
+- macOS 13.0+ (Ventura or later)
+- MacBook with Force Touch trackpad (2015+ MacBook Pro, 2016+ MacBook)
+
+**Installation:**
+
+The Wagownik app is located in `/wagownik/` directory. Build and run the Xcode project:
+
+```bash
+cd wagownik
+open TrackWeight.xcodeproj
+# Build and run in Xcode
+```
+
+Or download the latest release from the [Releases](https://github.com/krishkrosh/TrackWeight/releases) page.
+
+**Technical Details:**
+
+- Uses Open Multi-Touch Support library for direct trackpad sensor access
+- Pressure sensor data maps directly to grams
+- Integrates with the web app via `/api/scale` endpoints
+- Built with SwiftUI and Combine for reactive data flow
+
 ## Tech Stack
 
 - **Framework**: [Next.js 16](https://nextjs.org) with App Router
@@ -146,6 +193,7 @@ Generate stunning 3D models of your dishes using Meshy AI. See what your meal wi
   - [Firecrawl](https://firecrawl.dev) - Web scraping for recipe research
   - [Meshy AI](https://meshy.ai) - 3D model generation
 - **Browser Automation**: [Playwright](https://playwright.dev) + Google Gemini for Wolt ordering
+- **MacBook Integration**: Native macOS app using Force Touch trackpad as a scale
 - **Authentication**: Custom auth implementation
 - **Icons**: [Phosphor Icons](https://phosphoricons.com)
 
@@ -181,17 +229,19 @@ cp .env.example .env
 4. Configure your `.env` file:
 
 ```env
+# Database
+DATABASE_URL=postgresql://user:password@localhost:5432/gotownik
+
 # Vapi Configuration (for voice AI cooking assistant)
-REACT_APP_VAPI_PUBLIC_KEY=your_public_key_here
-REACT_APP_VAPI_ASSISTANT_ID=your_assistant_id_here
+VAPI_API_KEY=your_vapi_api_key_here
+NEXT_PUBLIC_VAPI_PUBLIC_KEY=your_vapi_public_key_here
+NEXT_PUBLIC_VAPI_ASSISTANT_ID=your_vapi_assistant_id_here
 
 # AI Configuration
 GEMINI_API_KEY=your_gemini_api_key_here
 NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
 FIRECRAWL_API_KEY=your_firecrawl_api_key_here
-
-# Optional: Vapi Server URL
-# REACT_APP_VAPI_BASE_URL=https://api.vapi.ai
+MESH_API_KEY=your_meshy_api_key_here
 ```
 
 5. Set up the database:
@@ -218,8 +268,9 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 2. **Describe Your Cravings** → Tell the AI what you want to cook (e.g., "high-protein dinner under 30 minutes")
 3. **Get Recipe Recommendations** → AI finds the 3 best recipes matching your ingredients
 4. **Start Cooking** → Launch the live cooking session with AI voice assistant
-5. **Follow Along** → Use AR windows for ingredients, steps, and timers
-6. **Order Missing Items** → Let AI order groceries through Wolt if needed
+5. **Weigh Ingredients** → Use your MacBook trackpad as a precision scale with Wagownik
+6. **Follow Along** → Use AR windows for ingredients, steps, and timers
+7. **Order Missing Items** → Let AI order groceries through Wolt if needed
 
 ## Available Scripts
 
@@ -253,7 +304,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 │   └── recipe-research/# AI recipe research agent
 ├── db/                # Database configuration
 ├── hooks/             # Shared React hooks
-└── lib/               # Utility functions
+├── lib/               # Utility functions
+└── wagownik/          # macOS companion app (MacBook as kitchen scale)
 ```
 
 ## Architecture
@@ -265,6 +317,7 @@ This project uses a **feature-based architecture** where each feature contains i
 - **Voice AI + Real-time Communication** (Live cooking assistant)
 - **Browser Automation** (Grocery ordering)
 - **3D Generation** (Food visualization)
+- **Hardware Integration** (MacBook trackpad as precision scale)
 
 ## Contributing
 
