@@ -260,24 +260,27 @@ export function RecipeResearchPage() {
 
         {result && (
           <>
-            <div className="grid gap-4 lg:grid-cols-3">
+            <div className="grid gap-5 lg:grid-cols-3">
               {result.recipes.map((recipe, index) => (
-                <Card key={`${recipe.title}-${index}`}>
-                  <CardHeader>
+                <Card
+                  key={`${recipe.title}-${index}`}
+                  className="overflow-hidden rounded-3xl border border-border/60 bg-muted/35 shadow-[inset_1px_1px_0_rgba(255,255,255,0.7),inset_-1px_-1px_0_rgba(0,0,0,0.06),0_12px_26px_rgba(0,0,0,0.08)]"
+                >
+                  <CardHeader className="pb-3">
                     <CardTitle className="text-xl">{recipe.title}</CardTitle>
                     <CardDescription>{recipe.summary}</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-3">
+                  <CardContent className="space-y-4">
                     <div className="flex flex-wrap gap-2">
-                      <Badge>
+                      <Badge className="rounded-full">
                         Have {recipe.availableIngredients.length}/
                         {recipe.ingredients.length}
                       </Badge>
-                      <Badge variant="outline">
+                      <Badge variant="outline" className="rounded-full">
                         Missing {recipe.missingCount}
                       </Badge>
-                      {recipe.fewMissing && (
-                        <Badge className="bg-emerald-600 text-white hover:bg-emerald-600">
+                      {recipe.fewMissing && recipe.missingCount > 0 && (
+                        <Badge className="rounded-full bg-emerald-600 text-white hover:bg-emerald-600">
                           Few ingredients missing
                         </Badge>
                       )}
@@ -289,7 +292,9 @@ export function RecipeResearchPage() {
                       </p>
                     )}
 
-                    <p className="text-sm">{recipe.whyItFits}</p>
+                    <p className="rounded-2xl border border-border/50 bg-background/70 px-3 py-2 text-sm shadow-[inset_1px_1px_0_rgba(255,255,255,0.65),inset_-1px_-1px_0_rgba(0,0,0,0.05)]">
+                      {recipe.whyItFits}
+                    </p>
 
                     <div className="space-y-1 text-sm">
                       <p className="font-medium">Missing ingredients:</p>
@@ -308,7 +313,7 @@ export function RecipeResearchPage() {
                       href={recipe.sourceUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm underline"
+                      className="inline-flex w-full items-center justify-center rounded-xl border border-border/60 bg-background/80 px-3 py-2 text-sm font-medium no-underline shadow-[inset_1px_1px_0_rgba(255,255,255,0.65),inset_-1px_-1px_0_rgba(0,0,0,0.05)] transition hover:bg-background"
                     >
                       Open source recipe
                     </a>
@@ -318,7 +323,7 @@ export function RecipeResearchPage() {
             </div>
 
             <div>
-              <Card>
+              <Card className="rounded-3xl border border-border/60 bg-muted/35 shadow-[inset_1px_1px_0_rgba(255,255,255,0.7),inset_-1px_-1px_0_rgba(0,0,0,0.06),0_12px_26px_rgba(0,0,0,0.08)]">
                 <CardHeader>
                   <CardTitle>Sources</CardTitle>
                 </CardHeader>
