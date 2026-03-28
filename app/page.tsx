@@ -67,7 +67,7 @@ export default function Home() {
               <Button
                 size="lg"
                 variant="secondary"
-                className="bg-gradient-to-r from-secondary to-secondary/80 hover:from-secondary/90 hover:to-secondary/70 hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
+                className="bg-gradient-to-r from-secondary via-secondary/90 to-secondary/80 hover:from-primary/20 hover:via-secondary hover:to-primary/20 transition-all duration-500 hover:scale-105"
               >
                 <Download className="mr-2 h-5 w-5" />
                 Download App
