@@ -5371,6 +5371,12 @@ packages:
         integrity: sha512-wG2Rzv9ywe2KGnX+N8VJtFO0srwyZaRmV8cBjsE52PCNdNJk8nVGtiK9HQ5wZZ5fUxk3wVPqV3zr8KxQjulR3w==,
       }
 
+  json-bigint@1.0.0:
+    resolution:
+      {
+        integrity: sha512-SiPv/8VpZuWbvLSMtTDU8hEfrZWg/mH/nV/b4o0CYbSxu1UIQPLdwKOCIyLQX+VIPO5vrLX3i8qtqFyhdPSUSQ==,
+      }
+
   json-buffer@3.0.1:
     resolution:
       {
@@ -10584,6 +10590,10 @@ snapshots:
   jsesc@3.1.0: {}
 
   jsfeat@0.0.8: {}
+
+  json-bigint@1.0.0:
+    dependencies:
+      bignumber.js: 9.3.1
 
   json-buffer@3.0.1: {}
 
