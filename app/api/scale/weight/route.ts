@@ -1,7 +1,18 @@
 import { NextResponse } from "next/server";
 
-import { db, eq } from "@/db";
+import { db, desc, eq } from "@/db";
 import { scaleMeasurementsTable } from "@/db/schema";
+
+export async function GET() {
+  const [latest] = await db
+    .select()
+    .from(scaleMeasurementsTable)
+    .where(eq(scaleMeasurementsTable.status, "done"))
+    .orderBy(desc(scaleMeasurementsTable.createdAt))
+    .limit(1);
+
+  return NextResponse.json({ measurement: latest ?? null });
+}
 
 export async function POST(req: Request) {
   const { id, weight } = (await req.json()) as { id: number; weight: number };
