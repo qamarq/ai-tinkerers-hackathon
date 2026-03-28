@@ -221,6 +221,8 @@ Generate 5-8 clear, actionable cooking steps. For each step:
 1. Write clear instructions (1-2 sentences max)
 2. Reference ingredient IDs when ingredients are used (e.g., ["1", "2"])
 3. Estimate how many minutes this step takes (optional)
+4. When mentioning ingredient amounts, ALWAYS use GRAMS (g) - e.g., "200g flour", "50g butter"
+5. For liquids, remember that 1ml ≈ 1g (e.g., "100ml milk" = "100g milk")
 
 Important:
 - Steps should be in logical cooking order
@@ -228,6 +230,7 @@ Important:
 - Include temperatures and timings where relevant
 - Mention when to use specific ingredients
 - Keep instructions concise and clear
+- Express all measurements in GRAMS (g)
 
 Return ONLY a JSON object with this exact structure:
 {
