@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gotownik.love
 
-## Getting Started
+**Multimodal cooking automation that turns your MacBook trackpad into a kitchen scale.**
 
-First, run the development server:
+Built for the AI Tinkerers Hackathon. A complete cooking experience for beginners—from fridge scan to finished dish.
+
+## What It Does
+
+🍳 **MacBook as Kitchen Scale** - Native macOS app (Wagownik) uses Force Touch trackpad pressure sensors as a precision gram scale. The AI cooking agent requests measurements anytime via REST API.
+
+🎙️ **Real-Time Cooking Agent** - Gemini Flash Lite 3.1-preview + Vapi voice AI. Multimodal: sees your kitchen (video), hears you (audio), responds naturally (speech-to-speech). AR overlay windows show ingredients, steps, timers, and chat on top of live video.
+
+🔍 **Deep Recipe Research** - FireCrawl-powered agent searches the web, extracts recipes, ranks top 3 matches based on your fridge contents and cooking preferences.
+
+📸 **Fridge Photo Extraction** - Snap a photo. Computer vision identifies all ingredients instantly.
+
+🛒 **Automated Grocery Ordering** - Playwright + Gemini browser agent navigates Wolt, searches Auchan, adds missing ingredients to cart.
+
+## Tech Stack
+
+- **Framework**: Next.js 16 + TypeScript
+- **AI**: Gemini Flash Lite 3.1-preview (Vercel AI SDK)
+- **Voice**: Vapi (real-time speech-to-speech)
+- **Vision**: Gemini Vision for fridge scanning
+- **Web Scraping**: Firecrawl
+- **Browser Automation**: Playwright + Gemini
+- **Database**: PostgreSQL + Drizzle ORM
+- **State**: Jotai + TanStack Query
+- **Hardware**: Native macOS app (SwiftUI + Force Touch sensors)
+
+## Quick Start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Install dependencies
+pnpm install
+
+# Copy and configure env
+cp .env.example .env
+# Add: DATABASE_URL, GEMINI_API_KEY, VAPI_API_KEY, FIRECRAWL_API_KEY
+
+# Setup database
+pnpm db:push
+
+# Run web app
 pnpm dev
-# or
-bun dev
+
+# Run MacBook scale app
+cd wagownik
+open TrackWeight.xcodeproj
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Architecture
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+Next.js Web App
+├── Fridge Scanner → Gemini Vision
+├── Recipe Agent → FireCrawl
+├── Cooking Session → Vapi + Gemini (Video + Audio)
+└── Browser Agent → Playwright → Wolt
+         │
+         ▼
+Wagownik (macOS)
+├── Force Touch Trackpad → Gram Scale
+└── REST API ↔ Cooking Agent
+```
 
-## Learn More
+## Key Innovations
 
-To learn more about Next.js, take a look at the following resources:
+- **Hardware-software integration**: First app using MacBook trackpad as precision kitchen scale
+- **True multimodal agent**: Video + audio + hardware sensors in real-time
+- **End-to-end automation**: Fridge scan → recipe discovery → cooking → grocery ordering
+- **Zero cooking knowledge required**: AI guides complete beginners
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Demo
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+[https://gotownik.love](https://gotownik.love)
 
-## Deploy on Vercel
+Happy to serve you our Chia Pudding with Fruits 🙂
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Team
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built by 5 AI Tinkerers from [@wroclaw-tech](https://github.com/wroclaw-tech):
+
+- **Konrad Guzek** ([@kguzek](https://github.com/kguzek))
+- **Szymon Kowaliński** ([@simon-the-shark](https://github.com/simon-the-shark))
+- **Tomasz Trela** ([@tomasz-trela](https://github.com/tomasz-trela))
+- **Kamil Marczak** ([@qamarq](https://github.com/qamarq))
+- **Bartosz Gotowski** ([@Rei-x](https://github.com/Rei-x))
+
+---
+
+_Built for the AI Tinkerers Hackathon 2026 in Warsaw_
