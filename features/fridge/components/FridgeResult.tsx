@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { FileCode, Spinner } from "@phosphor-icons/react";
+import { Spinner } from "@phosphor-icons/react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -118,27 +118,6 @@ export const FridgeResult: React.FC<FridgeResultProps> = ({
           </Table>
         </CardContent>
       </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileCode className="h-5 w-5" />
-            Raw JSON
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <pre className="bg-muted p-4 rounded-lg overflow-auto text-xs font-mono">
-            {JSON.stringify(result, null, 2)}
-          </pre>
-        </CardContent>
-      </Card>
-
-      <div className="text-xs text-muted-foreground border-t pt-4">
-        <p>Analyzed at: {new Date(result.meta.analyzedAt).toLocaleString()}</p>
-        {result.meta.notes && (
-          <p className="mt-1 italic">{result.meta.notes}</p>
-        )}
-      </div>
     </div>
   );
 };
