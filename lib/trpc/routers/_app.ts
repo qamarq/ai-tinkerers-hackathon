@@ -1,5 +1,6 @@
 import { createTRPCRouter, publicProcedure } from "../server";
 import { z } from "zod";
+import { fridgeRouter } from "./fridge";
 
 export const appRouter = createTRPCRouter({
   hello: publicProcedure
@@ -7,6 +8,7 @@ export const appRouter = createTRPCRouter({
     .query(({ input }) => {
       return `Hello ${input.name}!`;
     }),
+  fridge: fridgeRouter,
 });
 
 export type AppRouter = typeof appRouter;
