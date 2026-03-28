@@ -2,12 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Timer as TimerIcon } from "@phosphor-icons/react";
-
-import { TimerOverlay } from "./TimerOverlay";
-import { TimerSetupPopover } from "./TimerSetupPopover";
 import { useCamera } from "./useCamera";
 import { useTimers } from "./useTimers";
 import { useTracking } from "./useTracking";
+import { TimerOverlay } from "./TimerOverlay";
+import { TimerSetupPopover } from "./TimerSetupPopover";
 
 export function MinutnikApp() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -15,36 +14,23 @@ export function MinutnikApp() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { isReady, error } = useCamera(videoRef);
   const [timers, dispatch] = useTimers();
-  const [pendingClick, setPendingClick] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
+  const [pendingClick, setPendingClick] = useState<{ x: number; y: number } | null>(null);
   const beepedRef = useRef<Set<string>>(new Set());
 
   const onPositionUpdate = useCallback(
     (timerId: string, x: number, y: number, isLost: boolean) => {
       if (isLost) {
-        dispatch({
-          type: "UPDATE_POSITION",
-          payload: { id: timerId, x: -1, y: -1, isLost: true },
-        });
+        dispatch({ type: "UPDATE_POSITION", payload: { id: timerId, x: -1, y: -1, isLost: true } });
       } else {
-        dispatch({
-          type: "UPDATE_POSITION",
-          payload: { id: timerId, x, y, isLost: false },
-        });
+        dispatch({ type: "UPDATE_POSITION", payload: { id: timerId, x, y, isLost: false } });
       }
     },
-    [dispatch],
+    [dispatch]
   );
 
-  const { addTrackedPoint, removeTrackedPoint } = useTracking(
-    videoRef,
-    canvasRef,
-    {
-      onPositionUpdate,
-    },
-  );
+  const { addTrackedPoint, removeTrackedPoint } = useTracking(videoRef, canvasRef, {
+    onPositionUpdate,
+  });
 
   // Tick interval for countdown
   useEffect(() => {
@@ -61,11 +47,7 @@ export function MinutnikApp() {
   // Beep when a timer expires
   useEffect(() => {
     for (const timer of timers) {
-      if (
-        timer.remaining === 0 &&
-        timer.duration > 0 &&
-        !beepedRef.current.has(timer.id)
-      ) {
+      if (timer.remaining === 0 && timer.duration > 0 && !beepedRef.current.has(timer.id)) {
         beepedRef.current.add(timer.id);
         playBeep();
       }
@@ -122,10 +104,7 @@ export function MinutnikApp() {
   const activeCount = timers.filter((t) => t.isRunning).length;
 
   return (
-    <div
-      ref={containerRef}
-      className="relative w-screen h-screen overflow-hidden bg-black"
-    >
+    <div ref={containerRef} className="relative w-screen h-screen overflow-hidden bg-black">
       {/* Camera feed */}
       <div className="absolute inset-0" onClick={handleVideoClick}>
         <video

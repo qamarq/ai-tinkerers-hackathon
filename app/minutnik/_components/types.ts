@@ -16,19 +16,10 @@ export interface Timer {
 export type TimerAction =
   | {
       type: "ADD_TIMER";
-      payload: {
-        id: string;
-        x: number;
-        y: number;
-        duration: number;
-        label: string;
-      };
+      payload: { id: string; x: number; y: number; duration: number; label: string };
     }
   | { type: "REMOVE_TIMER"; payload: { id: string } }
   | { type: "TOGGLE_TIMER"; payload: { id: string } }
   | { type: "RESET_TIMER"; payload: { id: string } }
-  | {
-      type: "UPDATE_POSITION";
-      payload: { id: string; x: number; y: number; isLost: boolean };
-    }
+  | { type: "UPDATE_POSITION"; payload: { id: string; x: number; y: number; isLost: boolean } }
   | { type: "TICK" };
