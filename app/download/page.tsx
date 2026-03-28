@@ -29,12 +29,12 @@ export default function DownloadPage() {
             <span className="text-xl font-bold">Gotownik.love</span>
           </Link>
           <nav className="flex items-center gap-2">
-            <Link href="/">
-              <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Home
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </nav>
         </div>
       </header>

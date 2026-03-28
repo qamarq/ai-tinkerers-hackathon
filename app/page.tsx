@@ -29,9 +29,9 @@ export default function Home() {
             <span className="text-xl font-bold">Gotownik.love</span>
           </Link>
           <nav className="flex items-center gap-2">
-            <Link href="/fridge">
-              <Button size="sm">Get Started</Button>
-            </Link>
+            <Button size="sm" asChild>
+              <Link href="/fridge">Get Started</Link>
+            </Button>
           </nav>
         </div>
       </header>
@@ -47,32 +47,28 @@ export default function Home() {
             time.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/fridge">
-              <Button size="lg" className="w-full sm:w-auto">
+            <Button size="lg" className="w-full sm:w-auto" asChild>
+              <Link href="/fridge">
                 Start Cooking
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-            <Link href="/live-cooking">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                View Demo
-              </Button>
-            </Link>
+                <ArrowRight className="ml-1 h-5 w-5" />
+              </Link>
+            </Button>
           </div>
           <div className="pt-4">
             <p className="text-sm text-muted-foreground mb-3">
               Have a MacBook? Try our companion app
             </p>
-            <Link href="/download">
-              <Button
-                size="lg"
-                variant="secondary"
-                className="bg-gradient-to-r from-secondary via-secondary/90 to-secondary/80 hover:from-primary/20 hover:via-secondary hover:to-primary/20 transition-all duration-500 hover:scale-105"
-              >
+            <Button
+              size="lg"
+              variant="secondary"
+              className="bg-gradient-to-r from-secondary via-secondary/90 to-secondary/80 hover:from-primary/20 hover:via-secondary hover:to-primary/20 transition-all duration-500 hover:scale-105"
+              asChild
+            >
+              <Link href="/download">
                 <Download className="mr-2 h-5 w-5" />
                 Download App
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
 
