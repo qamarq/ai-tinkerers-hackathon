@@ -1,4 +1,5 @@
 import React from "react";
+
 import { useVapi } from "@/hooks/useVapi";
 
 interface VapiButtonProps {
@@ -45,11 +46,7 @@ export const VapiButton: React.FC<VapiButtonProps> = ({
         disabled={isLoading}
         className={
           className ||
-<<<<<<< HEAD:components/vapi/VapiButton.tsx
           "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
-=======
-          'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50'
->>>>>>> 8c83079 (ci: add prettier & husky):app/components/VapiButton.tsx
         }
       >
         {children ||

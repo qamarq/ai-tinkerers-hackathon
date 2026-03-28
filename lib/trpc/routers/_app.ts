@@ -1,7 +1,7 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from '../server';
-import { fridgeRouter } from './fridge';
+import { createTRPCRouter, publicProcedure } from "../server";
+import { fridgeRouter } from "./fridge";
 
 export const appRouter = createTRPCRouter({
   hello: publicProcedure
