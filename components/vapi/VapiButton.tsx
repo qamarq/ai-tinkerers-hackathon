@@ -1,5 +1,5 @@
-import React from 'react';
-import { useVapi } from '../hooks/useVapi';
+import React from "react";
+import { useVapi } from "../../hooks/useVapi";
 
 interface VapiButtonProps {
   publicKey?: string;
@@ -17,8 +17,8 @@ export const VapiButton: React.FC<VapiButtonProps> = ({
   children,
 }) => {
   const { startCall, endCall, isSessionActive, isLoading, error } = useVapi({
-    publicKey: publicKey || '',
-    assistantId: assistantId || '',
+    publicKey: publicKey || "",
+    assistantId: assistantId || "",
     baseUrl,
   });
 
@@ -45,14 +45,15 @@ export const VapiButton: React.FC<VapiButtonProps> = ({
         disabled={isLoading}
         className={
           className ||
-          'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50'
-        }>
+          "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+        }
+      >
         {children ||
           (isLoading
-            ? 'Connecting...'
+            ? "Connecting..."
             : isSessionActive
-              ? 'End Call'
-              : 'Start Call')}
+              ? "End Call"
+              : "Start Call")}
       </button>
       {error && <div className="text-red-500 mt-2 text-sm">Error: {error}</div>}
     </>
