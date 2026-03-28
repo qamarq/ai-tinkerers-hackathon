@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 
 import { useGeminiLive } from "../hooks/useGeminiLive";
@@ -65,6 +67,12 @@ export function LiveVideoChat() {
         {connectionState === "disconnected" && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/80">
             <div className="text-center space-y-6">
+              <Link
+                href="/"
+                className="inline-block mb-8 text-white/80 hover:text-white transition-colors text-lg"
+              >
+                ← Gotownik.love
+              </Link>
               <h1 className="text-4xl font-bold text-white">
                 Live AI Video Chat
               </h1>
@@ -88,7 +96,13 @@ export function LiveVideoChat() {
             {/* Top bar with status and controls */}
             <div className="absolute top-0 left-0 right-0 p-4 bg-linear-to-b from-black/60 to-transparent">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
+                  <Link
+                    href="/"
+                    className="text-white/80 hover:text-white transition-colors flex items-center gap-1"
+                  >
+                    ← Gotownik.love
+                  </Link>
                   <div className={`w-3 h-3 rounded-full ${getStatusColor()}`} />
                   <span className="text-white font-medium">
                     {getStatusText()}
