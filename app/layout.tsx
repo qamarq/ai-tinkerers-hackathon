@@ -7,8 +7,6 @@ import { cn } from "@/lib/utils";
 
 import "./globals.css";
 
-import { Analytics } from "@/components/analytics";
-
 export const dynamic = "force-static";
 
 const sourceSans3 = Source_Sans_3({
@@ -51,7 +49,6 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <TrpcProvider>{children}</TrpcProvider>
         <Toaster />
-        <Analytics />
       </body>
     </html>
   );

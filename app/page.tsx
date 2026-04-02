@@ -30,7 +30,7 @@ export default function Home() {
           </Link>
           <nav className="flex items-center gap-2">
             <Button size="sm" asChild>
-              <Link href="/fridge">Get Started</Link>
+              <Link href="/not-implemented">Get Started</Link>
             </Button>
           </nav>
         </div>
@@ -48,7 +48,7 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="w-full sm:w-auto" asChild>
-              <Link href="/fridge">
+              <Link href="/not-implemented">
                 Start Cooking
                 <ArrowRight className="ml-1 h-5 w-5" />
               </Link>
@@ -98,7 +98,6 @@ export default function Home() {
               </CardDescription>
             </CardHeader>
           </Card>
-
           <Card>
             <CardHeader>
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
